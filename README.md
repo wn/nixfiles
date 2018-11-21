@@ -3,4 +3,5 @@
 ## Contains
 - .vimrc
 - .zshrc
+- .tmux.conf
 

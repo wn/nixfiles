@@ -4,16 +4,15 @@ EXCLUDE=('README.md', 'install.sh')
 
 for config in *
 do
-    echo ${config}
     if [[ ${EXCLUDE[*]} =~ $config ]]
     then
         :
     else
         if [ -e ~/.${config} ]
         then
-            echo [-] Dotfile ~/.${config} already exists. Skipping...
+            echo "[-] Dotfile ~/.${config} already exists. Skipping..."
         else
-            echo [+] Creating symlink: ${config}
+            echo "[+] Creating symlink: ~/.${config}"
             ln -s ${PWD}/${config} ~/.${config}
         fi
     fi
