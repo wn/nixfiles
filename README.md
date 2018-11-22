@@ -4,4 +4,5 @@
 - .vimrc
 - .zshrc
 - .tmux.conf
-
+- authorized_keys
+    - Macbook Pro
