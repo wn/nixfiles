@@ -1,4 +1,4 @@
-# Configuration files for iTerm
+# Configuration files for terminal
 
 ## Contains
 - .vimrc
@@ -8,7 +8,6 @@
     - Install powerline fonts
     - Install rbenv
     - Install zsh-syntax-highlighting
-    -
 - .tmux.conf
 - authorized_keys
     - Macbook Pro
