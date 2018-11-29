@@ -48,7 +48,7 @@ set shiftwidth=4
 set softtabstop=4
 set expandtab
 set mouse=a
-
+set cursorline
 syntax on
 
 filetype plugin indent on
