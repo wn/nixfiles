@@ -45,10 +45,17 @@ set showcmd
 set incsearch
 set hlsearch
 set shiftwidth=4
+set copyindent
 set softtabstop=4
 set expandtab
 set mouse=a
 set cursorline
+set undolevels=1000
+set history=1000
+set title
+set nobackup
+set noswapfile
+set relativenumber
 syntax on
 
 filetype plugin indent on
@@ -141,3 +148,7 @@ let g:flow#enable = 0 " Disable typechecking on save
 " https://stackoverflow.com/a/8585343
 map <leader>q :bp<bar>sp<bar>bn<bar>bd<CR>
 
+ " path to directory where library can be found
+ let g:clang_library_path='/usr/lib/llvm-3.8/lib'
+ " or path directly to the library file
+ let g:clang_library_path='/usr/lib64/libclang.dylib.3.8'
