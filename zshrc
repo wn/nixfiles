@@ -1,5 +1,6 @@
 DEFAULT_USER=$USER
 eval "$(rbenv init -)"
+export TERM="xterm-256color"
 
 # Aliases
 alias haus="ssh -p 14159 weineng@haus.weineng.io"
@@ -8,11 +9,17 @@ alias sshkey="cat ~/.ssh/id_rsa.pub"
 alias tmuxk="tmux ls | grep : | cut -d. -f1 | awk '{print substr($1, 0, length($1)-1)}' | xargs kill"
 alias lsf="ssh weineng@sunfire.comp.nus.edu.sg"
 alias dev="cd ~/Developer"
-alias mods="cd ~/Google\ Drive/Y2S1"
 alias docs="cd ~/Documents"
+alias cwd='printf "%q\n" "$(pwd)"'
+alias tmp="cd ~/playground"
+alias cssh="ssh-copy-id -i ~/.ssh/id_rsa.pub"
+alias dl="cd ~/Downloads"
 
 set mouse=a
 HYPHEN_INSENSITIVE="true"
+
+# Force g++ compiler to show all warnings and use C++11
+alias gpp="g++ -Wall -Weffc++ -std=c++11 -Wextra -Wsign-conversion"
 
 # Override default 'cd' to show files (ls)
 function cd {
@@ -46,10 +53,15 @@ source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source /usr/local/etc/profile.d/z.sh
 
 export PATH="$PATH:$HOME/.rvm/bin"
+export PATH="$PATH:/Library/TeX/texbin"
 export LC_ALL=en_US.utf-8
 export LANG="$LC_ALL"
 export GPG_TTY=$(tty)
-export PATH=~/anaconda3/bin:$PATH
+
+# POWERLEVEL9K config
+ZSH_THEME="powerlevel9k/powerlevel9k"
+POWERLEVEL9K_SHORTEN_DIR_LENGTH=3
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status)
 
 # POWERLEVEL Config
 POWERLEVEL9K_MULTILINE_FIRST_PROMPT_PREFIX="╭"
@@ -101,6 +113,16 @@ POWERLEVEL9K_RAM_ELEMENTS=(ram_free)
 POWERLEVEL9K_TIME_BACKGROUND="black"
 POWERLEVEL9K_TIME_FOREGROUND="007"
 
-# Override git alias
-alias gca="git commit -S --amend"
-alias gbclean="git branch --merged | egrep -v '(^\*|master)' | xargs git branch -d"
+# Hub configuration
+alias git="hub"
+fpath=(~/.zsh/completions $fpath)
+autoload -U compinit && compinit
+
+
+# Set up shell and scripts
+export ZSH=~/.oh-my-zsh
+source $ZSH/oh-my-zsh.sh
+source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source /usr/local/etc/profile.d/z.sh
+source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+
