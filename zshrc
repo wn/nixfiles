@@ -3,15 +3,13 @@ eval "$(rbenv init -)"
 export TERM="xterm-256color"
 
 # Aliases
-alias haus="ssh -p 14159 weineng@haus.weineng.io"
 alias telebot="ssh root@178.128.121.225"
-alias sshkey="cat ~/.ssh/id_rsa.pub"
 alias tmuxk="tmux ls | grep : | cut -d. -f1 | awk '{print substr($1, 0, length($1)-1)}' | xargs kill"
 alias lsf="ssh weineng@sunfire.comp.nus.edu.sg"
 alias dev="cd ~/Developer"
 alias docs="cd ~/Documents"
 alias cwd='printf "%q\n" "$(pwd)"'
-alias tmp="cd ~/playground"
+alias play="cd ~/playground"
 alias cssh="ssh-copy-id -i ~/.ssh/id_rsa.pub"
 alias dl="cd ~/Downloads"
 
@@ -125,4 +123,4 @@ source $ZSH/oh-my-zsh.sh
 source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source /usr/local/etc/profile.d/z.sh
 source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
-
+export PATH="$HOME/.cargo/bin:$PATH"
