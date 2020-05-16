@@ -39,9 +39,6 @@ ZSH_THEME="powerlevel9k/powerlevel9k"
 POWERLEVEL9K_SHORTEN_DIR_LENGTH=3
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status)
 
-# Alias to replace git plugin
-alias gcmsg="git commit -S -m"
-
 export TERM="xterm-256color"
 export ZSH=~/.oh-my-zsh
 
@@ -124,3 +121,8 @@ source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source /usr/local/etc/profile.d/z.sh
 source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 export PATH="$HOME/.cargo/bin:$PATH"
+
+# Alias to replace git plugin
+alias gap="git add -p"
+alias gdc="git diff --cached"
+alias gcmsg="git commit -S -m"
