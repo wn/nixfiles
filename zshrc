@@ -3,14 +3,12 @@ eval "$(rbenv init -)"
 export TERM="xterm-256color"
 
 # Aliases
-alias telebot="ssh root@178.128.121.225"
 alias tmuxk="tmux ls | grep : | cut -d. -f1 | awk '{print substr($1, 0, length($1)-1)}' | xargs kill"
 alias lsf="ssh weineng@sunfire.comp.nus.edu.sg"
 alias dev="cd ~/Developer"
 alias docs="cd ~/Documents"
 alias cwd='printf "%q\n" "$(pwd)"'
 alias play="cd ~/playground"
-alias cssh="ssh-copy-id -i ~/.ssh/id_rsa.pub"
 alias dl="cd ~/Downloads"
 
 set mouse=a
@@ -46,6 +44,9 @@ export ZSH=~/.oh-my-zsh
 source $ZSH/oh-my-zsh.sh
 source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source /usr/local/etc/profile.d/z.sh
+
+autoload -Uz compinit; compinit
+autoload -Uz bashcompinit; bashcompinit
 
 export PATH="$PATH:$HOME/.rvm/bin"
 export PATH="$PATH:/Library/TeX/texbin"
