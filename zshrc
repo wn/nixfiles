@@ -45,9 +45,6 @@ source $ZSH/oh-my-zsh.sh
 source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source /usr/local/etc/profile.d/z.sh
 
-autoload -Uz compinit; compinit
-autoload -Uz bashcompinit; bashcompinit
-
 export PATH="$PATH:$HOME/.rvm/bin"
 export PATH="$PATH:/Library/TeX/texbin"
 export LC_ALL=en_US.utf-8
@@ -127,3 +124,4 @@ export PATH="$HOME/.cargo/bin:$PATH"
 alias gap="git add -p"
 alias gdc="git diff --cached"
 alias gcmsg="git commit -S -m"
+alias gl="git log --format=format:'%C(bold blue)%h%C(reset) %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold white)%an%C(reset)%C(bold yellow)%d%C(reset)' --abbrev-commit --date=relative"
