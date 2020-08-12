@@ -1,4 +1,5 @@
 DEFAULT_USER=$USER
+export PATH=/usr/local/bin:$PATH
 eval "$(rbenv init -)"
 export TERM="xterm-256color"
 
@@ -10,7 +11,7 @@ alias docs="cd ~/Documents"
 alias cwd='printf "%q\n" "$(pwd)"'
 alias play="cd ~/playground"
 alias dl="cd ~/Downloads"
-
+alias doomsync="sh ~/.emacs.d/bin/doom sync"
 set mouse=a
 HYPHEN_INSENSITIVE="true"
 
@@ -125,3 +126,4 @@ alias gap="git add -p"
 alias gdc="git diff --cached"
 alias gcmsg="git commit -S -m"
 alias gl="git log --format=format:'%C(bold blue)%h%C(reset) %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold white)%an%C(reset)%C(bold yellow)%d%C(reset)' --abbrev-commit --date=relative"
+export PATH="$HOME/.rbenv/bin:$PATH"
