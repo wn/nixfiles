@@ -5,38 +5,35 @@ export TERM="xterm-256color"
 
 # Aliases
 alias tmuxk="tmux ls | grep : | cut -d. -f1 | awk '{print substr($1, 0, length($1)-1)}' | xargs kill"
-alias lsf="ssh weineng@sunfire.comp.nus.edu.sg"
-alias dev="cd ~/Developer"
-alias docs="cd ~/Documents"
-alias cwd='printf "%q\n" "$(pwd)"'
-alias play="cd ~/playground"
-alias dl="cd ~/Downloads"
-alias doomsync="sh ~/.emacs.d/bin/doom sync"
+alias lsf='ssh weineng@sunfire.comp.nus.edu.sg'
+alias dev='cd ~/Developer'
+alias doc='cd ~/Documents'
+alias cwd="pwd | pbcopy && echo $(pwd)"
+alias play='cd ~/playground'
+alias dl='cd ~/Downloads'
+alias doomsync='sh ~/.emacs.d/bin/doom sync'
+alias eject="(){ diskutil eject /Volumes/$1 ;}"
+
 set mouse=a
 HYPHEN_INSENSITIVE="true"
 
 # Force g++ compiler to show all warnings and use C++11
-alias gpp="g++ -Wall -Weffc++ -std=c++11 -Wextra -Wsign-conversion"
-
-# Override default 'cd' to show files (ls)
-function cd {
-  builtin cd "$@" && ls -F
-}
+alias gpp='g++ -Wall -Weffc++ -std=c++11 -Wextra -Wsign-conversion'
 
 # Overriden alias
-alias rm "rm -i"
-alias cp "cp --reflink=auto --sparse=always"
-alias sudo "sudo -E"
-alias ls="ls -lhG"
+alias rm='rm -i'
+alias cp='cp --reflink=auto --sparse=always'
+alias sudo="sudo -E"
+alias ls='ls -lhG'
+alias pwd="printf %'q\n' '$(builtin pwd)'"
+# Override default 'cd' to show files (ls)
+function cd {
+  builtin cd $@ && ls -F;
+}
 
 plugins=(
   git
 )
-
-# POWERLEVEL9K config
-ZSH_THEME="powerlevel9k/powerlevel9k"
-POWERLEVEL9K_SHORTEN_DIR_LENGTH=3
-POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status)
 
 export TERM="xterm-256color"
 export ZSH=~/.oh-my-zsh
@@ -46,8 +43,12 @@ source $ZSH/oh-my-zsh.sh
 source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source /usr/local/etc/profile.d/z.sh
 
+# PATH config
+export PATH="$HOME/.cargo/bin:$PATH"
+export PATH="$HOME/.rbenv/bin:$PATH"
 export PATH="$PATH:$HOME/.rvm/bin"
 export PATH="$PATH:/Library/TeX/texbin"
+
 export LC_ALL=en_US.utf-8
 export LANG="$LC_ALL"
 export GPG_TTY=$(tty)
@@ -112,18 +113,18 @@ alias git="hub"
 fpath=(~/.zsh/completions $fpath)
 autoload -U compinit && compinit
 
-
 # Set up shell and scripts
 export ZSH=~/.oh-my-zsh
 source $ZSH/oh-my-zsh.sh
 source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source /usr/local/etc/profile.d/z.sh
 source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
-export PATH="$HOME/.cargo/bin:$PATH"
 
 # Alias to replace git plugin
 alias gap="git add -p"
 alias gdc="git diff --cached"
 alias gcmsg="git commit -S -m"
 alias gl="git log --format=format:'%C(bold blue)%h%C(reset) %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold white)%an%C(reset)%C(bold yellow)%d%C(reset)' --abbrev-commit --date=relative"
-export PATH="$HOME/.rbenv/bin:$PATH"
+alias glg="git log --all --decorate --oneline --graph"
+
+export CS140E_PATH=~/Developer/cs140e-20win
