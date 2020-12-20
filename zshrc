@@ -133,11 +133,21 @@ for script in ~/.scripts/*; do
   source <(cat "$script")
 done
 
+export forgit_log=gl
+export forgit_diff=gd
+export forgit_add=ga
+export forgit_reset_head=grh
+export forgit_ignore=gi
+export forgit_restore=gcf
+export forgit_clean=gclean
+export forgit_stash_show=gss
+export forgit_cherry_pick=gcp
+export forgit_rebase=grb
+
 # Alias to replace git plugin
 alias gap="git add -p"
 alias gdc="git diff --cached"
 alias gcmsg="git commit -S -m"
-alias gl="git log --format=format:'%C(bold blue)%h%C(reset) %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold white)%an%C(reset)%C(bold yellow)%d%C(reset)' --abbrev-commit --date=relative"
 alias glg="git log --all --decorate --oneline --graph"
 
 export CS107E=~/Developer/cs107e.github.io/cs107e
