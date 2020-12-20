@@ -129,10 +129,9 @@ source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 # alt-t to find sub-directories
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-# for script in ~/.scripts/*; do
-#    echo $script
-#   source <(cat "$script")
-# done
+for script in ~/.scripts/*; do
+  source <(cat "$script")
+done
 
 # Alias to replace git plugin
 alias gap="git add -p"
