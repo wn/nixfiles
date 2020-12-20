@@ -12,3 +12,5 @@
 - .tmux.conf
 - authorized_keys
   - Macbook Pro
+- scripts
+  - forgit (fzf support for git)
