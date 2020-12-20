@@ -250,9 +250,9 @@ $FORGIT_FZF_DEFAULT_OPTS
 if [[ -z "$FORGIT_NO_ALIASES" ]]; then
     alias "${forgit_add:-ga}"='forgit::add'
     alias "${forgit_reset_head:-grh}"='forgit::reset::head'
-    alias "${forgit_log:-glo}"='forgit::log'
+    alias "${forgit_log:-gl}"='forgit::log'
     alias "${forgit_diff:-gd}"='forgit::diff'
-    alias "${forgit_ignore:-gi}"='forgit::ignore'
+    # alias "${forgit_ignore:-gi}"='forgit::ignore'
     alias "${forgit_restore:-gcf}"='forgit::restore'
     alias "${forgit_clean:-gclean}"='forgit::clean'
     alias "${forgit_stash_show:-gss}"='forgit::stash::show'
