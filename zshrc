@@ -8,11 +8,11 @@ alias tmuxk="tmux ls | grep : | cut -d. -f1 | awk '{print substr($1, 0, length($
 alias lsf='ssh weineng@sunfire.comp.nus.edu.sg'
 alias dev='cd ~/Developer'
 alias doc='cd ~/Documents'
-alias cwd="pwd | pbcopy && echo $(pwd)"
+alias cwd='pwd | pbcopy && echo $(pwd)'
 alias play='cd ~/playground'
 alias dl='cd ~/Downloads'
 alias doomsync='sh ~/.emacs.d/bin/doom sync'
-alias eject="(){ diskutil eject /Volumes/$1 ;}"
+alias eject='(){ diskutil eject /Volumes/$1 ;}'
 
 set mouse=a
 HYPHEN_INSENSITIVE="true"
@@ -21,14 +21,13 @@ HYPHEN_INSENSITIVE="true"
 alias gpp='g++ -Wall -Weffc++ -std=c++11 -Wextra -Wsign-conversion'
 
 # Overriden alias
-alias rm='rm -i'
-alias cp='cp --reflink=auto --sparse=always'
+alias mv='mv -i'
 alias sudo="sudo -E"
 alias ls='ls -lhG'
-alias pwd="printf %'q\n' '$(builtin pwd)'"
+# alias pwd="printf %'q\n' '$(builtin pwd)'"
 # Override default 'cd' to show files (ls)
 function cd {
-  builtin cd $@ && ls -F;
+  builtin cd $@ && ls;
 }
 
 plugins=(
@@ -120,6 +119,21 @@ source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source /usr/local/etc/profile.d/z.sh
 source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 
+# fzf support
+# `brew install fzf`
+# `bash /usr/local/opt/fzf/install`
+
+# Usage:
+# ctrl-r to find history
+# ctrl-t to find files in directory
+# alt-t to find sub-directories
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# for script in ~/.scripts/*; do
+#    echo $script
+#   source <(cat "$script")
+# done
+
 # Alias to replace git plugin
 alias gap="git add -p"
 alias gdc="git diff --cached"
@@ -127,4 +141,6 @@ alias gcmsg="git commit -S -m"
 alias gl="git log --format=format:'%C(bold blue)%h%C(reset) %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold white)%an%C(reset)%C(bold yellow)%d%C(reset)' --abbrev-commit --date=relative"
 alias glg="git log --all --decorate --oneline --graph"
 
-export CS140E_PATH=~/Developer/cs140e-20win
+export CS107E=~/Developer/cs107e.github.io/cs107e
+export PATH=$PATH:$CS107E/bin
+alias rpi='~/Developer/cs107e.github.io/cs107e/bin/rpi-install.py'
