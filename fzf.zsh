@@ -8,26 +8,20 @@ fi
 # ---------------
 [[ $- == *i* ]] && source "/usr/local/opt/fzf/shell/completion.zsh" 2> /dev/null
 
-# using ripgrep combined with preview
-# find-in-file - usage: fif <searchTerm>
-fif() {
-  if [ ! "$#" -gt 0 ]; then echo "Need a string to search for!"; return 1; fi
-  rg --files-with-matches --no-messages "$1" | fzf --preview "highlight -O ansi -l {} 2> /dev/null | rg --colors 'match:bg:yellow' --ignore-case --pretty --context 10 '$1' || rg --ignore-case --pretty --context 10 '$1' {}"
-}
 
 # fkill - kill processes - list only the ones you can kill.
 fkill() {
-    local pid 
+    local pid
     if [ "$UID" != "0" ]; then
         pid=$(ps -f -u $UID | sed 1d | fzf -m | awk '{print $2}')
     else
         pid=$(ps -ef | sed 1d | fzf -m | awk '{print $2}')
-    fi  
+    fi
 
     if [ "x$pid" != "x" ]
     then
         echo $pid | xargs kill -${1:-9}
-    fi  
+    fi
 }
 
 # Install (one or multiple) selected application(s)
@@ -42,13 +36,48 @@ bip() {
   fi
 }
 
+# using ripgrep combined with preview
+# find-in-file - usage: ff <searchTerm>
+ff() {
+  if git rev-parse --git-dir > /dev/null 2>&1; then
+   # This is a valid git repository (but the current working
+    # directory may not be the top level.
+    # Check the output of the git rev-parse command if you care)
+    local WORKING_PATH=$(git rev-parse --show-toplevel)
+  else
+    local WORKING_PATH=$(PWD)
+  fi
+  if [ ! "$#" -gt 0 ]; then echo "Need a string to search for!"; return 1; fi
+  if [[ $(rg --files-with-matches --no-messages --ignore-case "$1" "$WORKING_PATH") ]]; then
+    rg --files-with-matches --ignore-case --no-messages "$1" "$WORKING_PATH" | fzf --preview "highlight -O ansi -l '$WORKING_PATH'/{} 2> /dev/null | rg --colors 'match:bg:yellow' --ignore-case --pretty --context 10 '$1' '$WORKING_PATH'|| rg --ignore-case --pretty --context 10 '$1' '$WORKING_PATH'/{}"
+  else
+    echo "No match found."
+  fi
+}
+
 unalias z 2> /dev/null
 z() {
   [ $# -gt 0 ] && _z "$*" && return
   cd "$(_z -l 2>&1 | fzf --height 40% --nth 2.. --reverse --inline-info +s --tac --query "${*##-* }" | sed 's/^[0-9,.]* *//')"
+  zle reset-prompt
 }
 
-# ********************************************** MY MACROS/KEY-BINDINGS **************************************************************** #
+zle     -N   z
+bindkey '^Z' z
+
+#------------------------------------------------- KEYBINDS ----------------------------------#
+#     ____      ____
+#    / __/___  / __/
+#   / /_/_  / / /_
+#  / __/ / /_/ __/
+# /_/   /___/_/ key-bindings.zsh
+#
+# - $FZF_TMUX_OPTS
+# - $FZF_CTRL_T_COMMAND
+# - $FZF_CTRL_T_OPTS
+# - $FZF_CTRL_R_OPTS
+# - $FZF_ALT_C_COMMAND
+# - $FZF_ALT_C_OPTS
 
 # Key bindings
 # ------------
