@@ -24,10 +24,15 @@ alias gpp='g++ -Wall -Weffc++ -std=c++11 -Wextra -Wsign-conversion'
 alias mv='mv -i'
 alias sudo="sudo -E"
 alias ls='ls -lhG'
-# alias pwd="printf %'q\n' '$(builtin pwd)'"
+
+# Override default 'pwd' to escape spaces in path
+function pwd() {
+  printf "%q\n" "$(builtin pwd)"
+}
+
 # Override default 'cd' to show files (ls)
-function cd {
-  builtin cd $@ && ls;
+function cd() {
+  builtin cd $@ && ls
 }
 
 plugins=(
@@ -127,8 +132,9 @@ source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 # ctrl-r to find history
 # ctrl-t to find files in directory
 # alt-t to find sub-directories
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+source ~/.fzf.zsh
 
+# Source all scripts defined in ~/.scripts
 for script in ~/.scripts/*; do
   source <(cat "$script")
 done
