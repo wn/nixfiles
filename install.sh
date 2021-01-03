@@ -1,6 +1,6 @@
 #! /bin/zsh
 
-EXCLUDE=('README.md', 'install.sh', 'iterm', 'vimium_dvorak.txt', 'authorized_keys')
+EXCLUDE=('README.md', 'install.sh', 'iterm', 'vimium_dvorak.txt', 'authorized_keys', 'config')
 
 for config in *
 do

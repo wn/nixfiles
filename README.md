@@ -14,3 +14,5 @@
   - Macbook Pro
 - scripts
   - forgit (fzf support for git)
+- gitconfig
+- config: stores .ssh file (~/.ssh/config)

@@ -1,0 +1,24 @@
+# This is Git's per-user configuration file.
+[user]
+	name = Ang Wei Neng
+	email = weineng.a@gmail.com
+	signingkey = 846B0AD4094F9CA0
+[gpg]
+	program = gpg
+[commit]
+	gpgsign = true
+[core]
+	excludesfile = ~/.gitignore_global
+	autocrlf = false
+	editor = nano
+[credential]
+	helper = osxkeychain
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[pull]
+	rebase = true
+[alias]
+	root = rev-parse --show-toplevel
