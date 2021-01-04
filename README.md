@@ -1,4 +1,4 @@
-# Configuration files for terminal
+# Setup MacOS
 
 ## Contains
 
@@ -16,3 +16,33 @@
   - forgit (fzf support for git)
 - gitconfig
 - config: stores .ssh file (~/.ssh/config)
+
+## Apps to download
+
+- [Notion](https://www.notion.so/desktop)
+- [Alfred](https://www.alfredapp.com/help/v3/)
+  - add hotkey
+    - chrome (cmd-shift-c)
+    - iterm (cmd-shift-g)
+- dash
+- [discord](https://discord.com/api/download?platform=osx)
+- [fantastical 2](https://flexibits.com/fantastical/download)
+- [flux](https://justgetflux.com/)
+- [iterm](https://iterm2.com/downloads.html)
+- [karabina](https://karabiner-elements.pqrs.org/)
+- [magnet](https://apps.apple.com/us/app/magnet/id441258766?mt=12)
+- [logi option](https://www.logitech.com/en-sg/product/options)
+- excel, powerpoint, word
+- [send to kindle](https://www.amazon.com/gp/sendtokindle/mac)
+- [skype](https://www.skype.com/en/get-skype/)
+- [spotify](https://www.spotify.com/us/download/mac/)
+- [tidal](https://offer.tidal.com/download?lang=en)
+- [spark](https://sparkmailapp.com/download)
+- [todoist](https://todoist.com/downloads/mac)
+- [zoom](https://apps.apple.com/us/app/id546505307)
+- [vscode](https://code.visualstudio.com/download)
+- [whatsapp](https://www.whatsapp.com/download/?lang=en)
+
+## Other setups
+
+- [Set up github](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/generating-a-new-gpg-key)
