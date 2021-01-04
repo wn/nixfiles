@@ -2,7 +2,7 @@
 [user]
 	name = Ang Wei Neng
 	email = weineng.a@gmail.com
-	signingkey = 846B0AD4094F9CA0
+	signingkey = B8AE52EE229F060C
 [gpg]
 	program = gpg
 [commit]
