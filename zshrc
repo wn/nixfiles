@@ -1,6 +1,5 @@
 DEFAULT_USER=$USER
 export PATH=/usr/local/bin:$PATH
-eval "$(rbenv init -)"
 export TERM="xterm-256color"
 
 # Aliases
@@ -122,6 +121,7 @@ source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
+eval "$(rbenv init -)"
 
 # fzf support
 # `brew install fzf`
