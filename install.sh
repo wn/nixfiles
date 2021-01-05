@@ -1,6 +1,6 @@
 #! /bin/zsh
 
-EXCLUDE=('README.md', 'install.sh', 'iterm', 'vimium_dvorak.txt', 'authorized_keys', 'config')
+EXCLUDE=('README.md', 'install.sh', 'iterm', 'vimium_dvorak.txt', 'authorized_keys', 'config', 'karabiner.json')
 
 if ! command -v zsh &> /dev/null
 then
