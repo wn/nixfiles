@@ -24,6 +24,9 @@
   - add hotkey
     - chrome (cmd-shift-c)
     - iterm (cmd-shift-g)
+    - Add email snippet (myem)
+    - Disable spotlight shortcut
+    - set appropriate hotkeys for clipboard (cmd-shift-v)
 - dash
 - [discord](https://discord.com/api/download?platform=osx)
 - [fantastical 2](https://flexibits.com/fantastical/download)
@@ -40,7 +43,10 @@
 - [spark](https://sparkmailapp.com/download)
 - [todoist](https://todoist.com/downloads/mac)
 - [zoom](https://apps.apple.com/us/app/id546505307)
+- telegram
+  - Download from App store
 - [vscode](https://code.visualstudio.com/download)
+  - Add path to terminal (ctrl-h -> Add PATH)
 - [whatsapp](https://www.whatsapp.com/download/?lang=en)
 
 ## Other setups
