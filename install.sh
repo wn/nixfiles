@@ -34,7 +34,7 @@ if ! command -v brew &> /dev/null
 then
     echo '[+] Installing brew'
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    brew install zsh-syntax-highlighting zsh-autosuggestions z hub fzf
+    brew install zsh-syntax-highlighting zsh-autosuggestions z hub fzf htop wget
 fi
 
 echo '[+] Deployment complete'

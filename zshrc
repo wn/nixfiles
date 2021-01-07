@@ -147,3 +147,10 @@ alias glg="git log --all --decorate --oneline --graph"
 export CS107E=~/Developer/cs107e.github.io/cs107e
 export PATH=$PATH:$CS107E/bin
 alias rpi='~/Developer/cs107e.github.io/cs107e/bin/rpi-install.py'
+
+
+### APPLE SILLICON HACKS ###
+# Alias to handle brew for apple m1 chip
+alias brewi='/usr/local/homebrew/bin/brew' # for intel
+alias brewa='/opt/homebrew/bin/brw' # for arm
+export PATH=$PATH:/usr/local/go/bin
