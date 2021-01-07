@@ -52,3 +52,6 @@
 ## Other setups
 
 - [Set up github](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/generating-a-new-gpg-key)
+  - Create personal access token (github -> settings -> Developer -> access token)
+  - Change signing token in gitconfig
+- Set keyboard speed in settings
