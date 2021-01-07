@@ -24,15 +24,21 @@
   - add hotkey
     - chrome (cmd-shift-c)
     - iterm (cmd-shift-g)
-    - Add email snippet (myem)
+    - Add email snippet (!em)$$
     - Disable spotlight shortcut
     - set appropriate hotkeys for clipboard (cmd-shift-v)
+    - Hide menu icon
 - dash
 - [discord](https://discord.com/api/download?platform=osx)
 - [fantastical 2](https://flexibits.com/fantastical/download)
+  - Sync email
+  - remove icon from menu
 - [flux](https://justgetflux.com/)
 - [iterm](https://iterm2.com/downloads.html)
 - [karabina](https://karabiner-elements.pqrs.org/)
+  - Add `karabiner.json` to `~/.config/karabiner`
+  - Set backspace, backslash, capslock shortcut
+  - Ensure that Apple Internal keyboard is the only set device under `Devices`
 - [magnet](https://apps.apple.com/us/app/magnet/id441258766?mt=12)
 - [logi option](https://www.logitech.com/en-sg/product/options)
 - excel, powerpoint, word
@@ -42,9 +48,11 @@
 - [tidal](https://offer.tidal.com/download?lang=en)
 - [spark](https://sparkmailapp.com/download)
 - [todoist](https://todoist.com/downloads/mac)
+  - Hide menu icon
 - [zoom](https://apps.apple.com/us/app/id546505307)
 - telegram
   - Download from App store
+  - Hide icon in stetings
 - [vscode](https://code.visualstudio.com/download)
   - Add path to terminal (ctrl-h -> Add PATH)
 - [whatsapp](https://www.whatsapp.com/download/?lang=en)
@@ -55,3 +63,8 @@
   - Create personal access token (github -> settings -> Developer -> access token)
   - Change signing token in gitconfig
 - Set keyboard speed in settings
+- Set dock
+  - Finder, fantastical 2, notion, todoist, chrome, iterm, spark, telegram
+  - Application, downloads, bin
+- Add bluetooth to menu bar
+- Set finder to show developer and home directory in favourites

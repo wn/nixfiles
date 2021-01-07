@@ -1,10 +1,12 @@
-#! /bin/zsh
+#! /bin/bash
 
 EXCLUDE=('README.md', 'install.sh', 'iterm', 'vimium_dvorak.txt', 'authorized_keys', 'config', 'karabiner.json')
 
-echo '[+] Installing ohmyzsh'
-sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+if [ ! -d ~/.oh-my-zsh ]; then
+    echo '[+] Installing ohmyzsh'
+    sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+fi
 
 for config in *
 do
@@ -24,8 +26,7 @@ done
 
 echo '[+] Dotfiles have been deployed'
 
-echo '[+] Fetching & Installing dependencies'
-# curl https://raw.githubusercontent.com/Shougo/neobundle.vim/master/bin/install.sh | sh > /dev/null 2>&1
+# echo '[+] Fetching & Installing dependencies'
 
 if ! command -v brew &> /dev/null
 then
@@ -36,4 +37,4 @@ fi
 
 echo '[+] Deployment complete'
 
-source ~/.zshrc
+# source ~/.zshrc
