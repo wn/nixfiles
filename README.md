@@ -41,6 +41,7 @@
   - Ensure that Apple Internal keyboard is the only set device under `Devices`
 - [magnet](https://apps.apple.com/us/app/magnet/id441258766?mt=12)
 - [logi option](https://www.logitech.com/en-sg/product/options)
+- [qmk toolkit](https://github.com/qmk/qmk_toolbox/releases)
 - excel, powerpoint, word
 - [send to kindle](https://www.amazon.com/gp/sendtokindle/mac)
 - [skype](https://www.skype.com/en/get-skype/)
