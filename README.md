@@ -69,3 +69,5 @@
   - Application, downloads, bin
 - Add bluetooth to menu bar
 - Set finder to show developer and home directory in favourites
+- Force disable default Apple shit through terminal
+  - accent after holding an alphabet `defaults write -g ApplePressAndHoldEnabled -bool false`
