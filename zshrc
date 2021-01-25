@@ -59,6 +59,8 @@ autoload -U promptinit
 promptinit
 prompt pure
 
+zstyle :prompt:pure:git:stash show yes
+
 export ZSH=~/.oh-my-zsh
 source $ZSH/oh-my-zsh.sh
 
