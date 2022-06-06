@@ -11,9 +11,7 @@
     nixfmt
     curl
     wget
-    gpg
     hub
-    z
     mosh
     tmux
     go

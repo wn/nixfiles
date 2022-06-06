@@ -14,17 +14,25 @@
     enable = true;
     userName = "Weineng Ang";
     userEmail = "weineng.a@gmail.com";
-    signing.key = "1C8D1EA6010A15FC";
     ignores = [ "*.log" "*.DS_Store" "*.sql" "*.sqlite" "*.DS_Store*" "*.idea" ];
+    iniContent = {
+      commit.gpgSign = true;
+      signing.key = "1C8D1EA6010A15FC";
+    };
+    aliases = {
+      st = "status";
+      root = "rev-parse --show-toplevel";
+    };
     extraConfig = {
+      core = {
+        autocrlf = false;
+        editor = "nano";
+      };
+
       pull.rebase = true;
       init.defaultBranch = "main";
       status = {
         submodulesummary = true;
-      };
-      alias = {
-        st = "status";
-        root = "rev-parse --show-toplevel";
       };
     };
   };
@@ -59,7 +67,7 @@
       # Force g++ compiler to show all warnings and use C++11
       gpp = "g ++ -Wall - Weffc ++ -std=c++11 -Wextra -Wsign-conversion";
       glg = "git log --all --decorate --oneline --graph";
-      gdc="git diff --cached"
+      gdc = "git diff --cached";
     };
 
     localVariables = {
