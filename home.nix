@@ -45,14 +45,16 @@
     enable = true;
     autocd = true;
     dotDir = ".config/zsh";
-    enableAutosuggestions = false;
-    enableCompletion = true;
+    enableAutosuggestions = true;
+    enableCompletion = false;
 
     shellAliases = {
       sl = "exa";
       ls = "exa";
       l = "exa -l";
       la = "exa -la";
+
+      # git aliases
       gm = "git";
       gco = "gm checkout";
       gst = "gm status";
@@ -64,13 +66,15 @@
       gca = "gm commit --amend --no-edit";
       gd = "gm diff";
       gaaa = "gaa && gca && gp";
-      install = "gssproxy2 fixedout";
       gl = "gm log";
-      reset = "nixpkgs-fmt ~/.dotconfig/home.nix && nix-shell -p home-manager --run \"home-manager -f ~/.dotconfig/home.nix switch\" && exec zsh";
-      # Force g++ compiler to show all warnings and use C++11
-      gpp = "g ++ -Wall - Weffc ++ -std=c++11 -Wextra -Wsign-conversion";
       glg = "git log --all --decorate --oneline --graph";
       gdc = "git diff --cached";
+
+      # nix-os alias
+      reset = "nixpkgs-fmt ~/.dotconfig/home.nix && nix-shell -p home-manager --run \"home-manager -f ~/.dotconfig/home.nix switch\" && exec zsh";
+
+      # Force g++ compiler to show all warnings and use C++11
+      gpp = "g ++ -Wall - Weffc ++ -std=c++11 -Wextra -Wsign-conversion";
     };
 
     localVariables = {
@@ -132,7 +136,11 @@
 
     envExtra = ''
       source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-      source $HOME/.nix-profile/etc/profile.d/hm-session-vars.sh
+      export NIX_PATH=$HOME/.nix-defexpr/channels:$NIX_PATH
+
+      if [[ $OSTYPE == 'darwin'* ]]; then
+        eval "$(/usr/local/bin/brew shellenv)";
+      fi
     '';
 
     initExtra = ''

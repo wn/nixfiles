@@ -14,6 +14,7 @@
     hub
     gnupg
     pinentry
+    bash
     mosh
     tmux
     go
