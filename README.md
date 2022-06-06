@@ -7,7 +7,7 @@
 ```bash
 # From https://gist.github.com/mandrean/65108e0898629e20afe1002d8bf4f223
 sh <(curl -L https://nixos.org/nix/install) --darwin-use-unencrypted-nix-store-volume --daemon
-# reboot machine
+# reboot machine before continuing
 source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
 source $HOME/.nix-profile/etc/profile.d/hm-session-vars.sh
 export NIX_PATH=darwin-config=$HOME/.nixpkgs/darwin-configuration.nix:$HOME/.nix-defexpr/channels${NIX_PATH:+:}$NIX_PATH
