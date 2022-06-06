@@ -12,12 +12,12 @@
 
   programs.git = {
     enable = true;
-    userName = "Weineng Ang";
+    userName = "Ang Wei Neng";
     userEmail = "weineng.a@gmail.com";
     ignores = [ "*.log" "*.DS_Store" "*.sql" "*.sqlite" "*.DS_Store*" "*.idea" ];
     iniContent = {
       commit.gpgSign = true;
-      signing.key = "1C8D1EA6010A15FC";
+      signing.key = "1C3A31CF1EB43ABC1766DB2F1C8D1EA6010A15FC";
     };
     aliases = {
       st = "status";
@@ -33,6 +33,9 @@
       init.defaultBranch = "main";
       status = {
         submodulesummary = true;
+      };
+      gpg = {
+        program = "gpg";
       };
     };
   };

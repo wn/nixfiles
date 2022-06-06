@@ -12,6 +12,8 @@
     curl
     wget
     hub
+    gnupg
+    pinentry
     mosh
     tmux
     go
