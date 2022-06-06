@@ -5,6 +5,7 @@
 ### MacOS
 
 ```bash
+# From https://gist.github.com/mandrean/65108e0898629e20afe1002d8bf4f223
 sh <(curl -L https://nixos.org/nix/install) --darwin-use-unencrypted-nix-store-volume --daemon
 # reboot machine
 source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
