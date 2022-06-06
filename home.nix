@@ -71,8 +71,8 @@
       gdc = "gm diff --cached";
       gp = "gm push";
 
-        # nix-os alias
-        reset = "nixpkgs-fmt ~/.dotconfig/home.nix && nix-shell -p home-manager --run \"home-manager -f ~/.dotconfig/home.nix switch\" && exec zsh";
+      # nix-os alias
+      reset = "nixpkgs-fmt ~/.dotconfig/home.nix && nix-shell -p home-manager --run \"home-manager -f ~/.dotconfig/home.nix switch\" && exec zsh";
 
       # Force g++ compiler to show all warnings and use C++11
       gpp = "g ++ -Wall - Weffc ++ -std=c++11 -Wextra -Wsign-conversion";
@@ -136,10 +136,9 @@
     ];
 
     envExtra = ''
-      source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-      export NIX_PATH=$HOME/.nix-defexpr/channels:$NIX_PATH
-
       if [[ $OSTYPE == 'darwin'* ]]; then
+        source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+        export NIX_PATH=$HOME/.nix-defexpr/channels:$NIX_PATH
         eval "$(/usr/local/bin/brew shellenv)";
       fi
     '';
