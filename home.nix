@@ -1,24 +1,13 @@
 { pkgs, config, lib, ... }: {
-  home.username = "weineng";
-  home.homeDirectory = "/Users/weineng";
-  home.stateVersion = "20.09";
-  # home.sessionPath = [ "/opt/ts/bin" ];
-
   nixpkgs.config.allowUnfree = true;
 
   fonts.fontconfig.enable = true;
 
-  imports = [ ./packages.nix ];
+  imports = [ ./packages.nix ./config.nix ];
 
   programs.git = {
     enable = true;
-    userName = "Ang Wei Neng";
-    userEmail = "weineng.a@gmail.com";
     ignores = [ "*.log" "*.DS_Store" "*.sql" "*.sqlite" "*.DS_Store*" "*.idea" ];
-    iniContent = {
-      commit.gpgSign = true;
-      signing.key = "1C3A31CF1EB43ABC1766DB2F1C8D1EA6010A15FC";
-    };
     aliases = {
       st = "status";
       root = "rev-parse --show-toplevel";

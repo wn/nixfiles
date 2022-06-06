@@ -2,6 +2,8 @@
 
 ## Nix home-manager setup
 
+Configure personal settings in `config.nix`
+
 ### MacOS
 
 ```bash
