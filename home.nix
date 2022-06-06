@@ -15,7 +15,7 @@
     extraConfig = {
       core = {
         autocrlf = false;
-        editor = "nano";
+        editor = "vim";
       };
 
       pull.rebase = true;
