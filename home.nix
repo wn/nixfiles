@@ -3,7 +3,7 @@
 
   fonts.fontconfig.enable = true;
 
-  imports = [ ./packages.nix ./config.nix ];
+  imports = [ ./packages.nix ./configs.nix ];
 
   programs.git = {
     enable = true;
