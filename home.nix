@@ -15,6 +15,7 @@
     userName = "Weineng Ang";
     userEmail = "weineng.a@gmail.com";
     signing.key = "1C8D1EA6010A15FC";
+    ignores = [ "*.log" "*.DS_Store" "*.sql" "*.sqlite" "*.DS_Store*" "*.idea" ];
     extraConfig = {
       pull.rebase = true;
       init.defaultBranch = "main";
@@ -57,6 +58,8 @@
       reset = "nixpkgs-fmt ~/.dotconfig/home.nix && nix-shell -p home-manager --run \"home-manager -f ~/.dotconfig/home.nix switch\" && exec zsh";
       # Force g++ compiler to show all warnings and use C++11
       gpp = "g ++ -Wall - Weffc ++ -std=c++11 -Wextra -Wsign-conversion";
+      glg = "git log --all --decorate --oneline --graph";
+      gdc="git diff --cached"
     };
 
     localVariables = {
