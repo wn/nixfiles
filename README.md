@@ -4,6 +4,14 @@
 
 Configure personal settings in `configs.nix`
 
+### Linux
+
+```bash
+curl -L https://nixos.org/nix/install | sh # run as non-root
+export NIX_PATH=~/.nix-defexpr/channels
+nix-shell -p home-manager --run "home-manager -f ~/.dotconfig/home.nix switch" && exec zsh
+```
+
 ### MacOS
 
 ```bash
