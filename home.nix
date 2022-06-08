@@ -7,7 +7,8 @@
 
   programs.git = {
     enable = true;
-    ignores = [ "*.log" "*.DS_Store" "*.sql" "*.sqlite" "*.DS_Store*" "*.idea" ];
+    ignores =
+      [ "*.log" "*.DS_Store" "*.sql" "*.sqlite" "*.DS_Store*" "*.idea" ];
     aliases = {
       st = "status";
       root = "rev-parse --show-toplevel";
@@ -20,12 +21,8 @@
 
       pull.rebase = true;
       init.defaultBranch = "main";
-      status = {
-        submodulesummary = true;
-      };
-      gpg = {
-        program = "gpg";
-      };
+      status = { submodulesummary = true; };
+      gpg = { program = "gpg"; };
     };
   };
 
@@ -61,15 +58,14 @@
       gp = "gm push";
 
       # nix-os alias
-      reset = "nixpkgs-fmt ~/.dotconfig/home.nix && nix-shell -p home-manager --run \"home-manager -f ~/.dotconfig/home.nix switch\" && exec zsh";
+      reset = ''
+        nixfmt *.nix && nix-shell -p home-manager --run "home-manager -f ~/.dotconfig/home.nix switch" && exec zsh'';
 
       # Force g++ compiler to show all warnings and use C++11
       gpp = "g ++ -Wall - Weffc ++ -std=c++11 -Wextra -Wsign-conversion";
     };
 
-    localVariables = {
-      EDITOR = "vim";
-    };
+    localVariables = { EDITOR = "vim"; };
 
     plugins = with pkgs; [
       {
@@ -156,9 +152,7 @@
     '';
   };
 
-  programs.home-manager = {
-    enable = true;
-  };
+  programs.home-manager = { enable = true; };
 
   programs.fzf = {
     enable = true;
