@@ -1,12 +1,56 @@
-{ pkgs, config, lib, ... }: {
+{ pkgs, config, lib, ... }:
+
+let
+  inherit (lib) mkMerge;
+  git_userName = "Ang Wei Neng";
+  git_userEmail = "weineng.a@gmail.com";
+  git_signing_key = "1C3A31CF1EB43ABC1766DB2F1C8D1EA6010A15FC";
+in {
   nixpkgs.config.allowUnfree = true;
-
+  # nixpkgs.config.allowBroken = true;
   fonts.fontconfig.enable = true;
+  # home.file.".doom.d".source = ./doom.d;
+  home = {
+    username = builtins.getEnv "USER";
+    homeDirectory = builtins.getEnv "HOME";
+    stateVersion = "20.09";
+    packages = with pkgs; [
+      ripgrep
+      jq
+      zsh
+      fzf
+      # exa
+      # vscode
+      emacs
+      htop
+      # nixfmt
+      curl
+      wget
+      hub
+      gnupg
+      pinentry
+      bash
+      mosh
+      tmux
+      go
+      go-tools
+      go-outline
+      gopls
+      gopkgs
+      nmap
+    ];
+  };
 
-  imports = [ ./packages.nix ./configs.nix ];
+  imports = [  ];
 
   programs.git = {
     enable = true;
+    userName = git_userName;
+    userEmail = git_userEmail;
+    iniContent = {
+      commit.gpgSign = git_signing_key != "";
+      signing.key = git_signing_key;
+    };
     ignores =
       [ "*.log" "*.DS_Store" "*.sql" "*.sqlite" "*.DS_Store*" "*.idea" ];
     aliases = {
@@ -35,34 +79,34 @@
     enableCompletion = false;
 
     shellAliases = {
-      sl = "exa";
-      ls = "exa";
-      l = "exa -l";
-      la = "exa -la";
+      ls = "ls";
+      sl = "ls";
+      l = "ls -l";
+      la = "ls -la";
 
       # git aliases
-      gm = "git";
-      gco = "gm checkout";
-      gst = "gm status";
-      gcmsg = "gm commit -m";
-      gcb = "gm checkout -b";
-      gaa = "gm add .";
-      ga = "gm add";
-      gcm = "gm checkout master";
-      gca = "gm commit --amend --no-edit";
-      gd = "gm diff";
+      git = "git";
+      gco = "git checkout";
+      gst = "git status";
+      gcmsg = "git commit -m";
+      gcb = "git checkout -b";
+      gaa = "git add .";
+      ga = "git add";
+      gcm = "git checkout master";
+      gca = "git commit --amend --no-edit";
+      gd = "git diff";
       gaaa = "gaa && gca && gp";
-      gl = "gm log";
-      glg = "gm log --all --decorate --oneline --graph";
-      gdc = "gm diff --cached";
-      gp = "gm push";
+      gl = "git log";
+      glg = "git log --all --decorate --oneline --graph";
+      gdc = "git diff --cached";
+      gp = "git push";
 
       # nix-os alias
       reset = ''
-        nixfmt *.nix && nix-shell -p home-manager --run "home-manager -f ~/.dotconfig/home.nix switch" && exec zsh'';
+        nix-shell -p home-manager --run "home-manager -f ~/.dotconfig/home.nix switch" && exec zsh'';
 
       # Force g++ compiler to show all warnings and use C++11
-      gpp = "g ++ -Wall - Weffc ++ -std=c++11 -Wextra -Wsign-conversion";
+      gpp = "g++ -Wall - Weffc ++ -std=c++11 -Wextra -Wsign-conversion";
     };
 
     localVariables = { EDITOR = "vim"; };
@@ -99,16 +143,6 @@
         file = "zsh-syntax-highlighting.zsh";
       }
       {
-        name = "zsh-autopair";
-        src = fetchFromGitHub {
-          owner = "hlissner";
-          repo = "zsh-autopair";
-          rev = "34a8bca0c18fcf3ab1561caef9790abffc1d3d49";
-          sha256 = "1h0vm2dgrmb8i2pvsgis3lshc5b0ad846836m62y8h3rdb3zmpy1";
-        };
-        file = "autopair.zsh";
-      }
-      {
         name = "pure";
         src = fetchFromGitHub {
           owner = "sindresorhus";
@@ -129,24 +163,26 @@
     '';
 
     initExtra = ''
-          function pwd() {
-            printf "%q\n" "$(builtin pwd)"
-          }
+      function pwd() {
+        printf "%q\n" "$(builtin pwd)"
+      }
 
-          # Override default 'cd' to show files (ls)
-          function cd() {
-            builtin cd $@ && ls
-          }
+      # Override default 'cd' to show files (ls)
+      function cd() {
+        builtin cd $@ && ls
+      }
 
-          function pyenv() {
-            echo "Starting pyenv: $1"
-            python3 -m venv $1 && source $1/bin/activate
-          }
+      function pyenv() {
+        echo "Starting pyenv: $1"
+        python3 -m venv $1 && source $1/bin/activate
+      }
 
       # set up pure
       autoload -U promptinit
       promptinit
       prompt pure
+
+      export PATH="$PATH:$HOME/.emacs.d/bin"
 
       zstyle :prompt:pure:git:stash show yes
     '';
