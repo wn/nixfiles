@@ -9,31 +9,42 @@ in {
   nixpkgs.config.allowUnfree = true;
   # nixpkgs.config.allowBroken = true;
   fonts.fontconfig.enable = true;
-  # home.file.".doom.d".source = ./doom.d;
+  home.file.".doom.d".source = ./doom.d;
   home = {
     username = builtins.getEnv "USER";
     homeDirectory = builtins.getEnv "HOME";
     stateVersion = "20.09";
     packages = with pkgs; [
       ripgrep
+      virtualenv
+      silver-searcher
+      irony-server
+      readline
+      ccls
+      glslang
+      fd
       jq
       zsh
       fzf
+      pylint
       # exa
       # vscode
       emacs
       htop
-      # nixfmt
+      nixfmt
       curl
       wget
       hub
       gnupg
       pinentry
       bash
+      shellcheck
       mosh
+      pandoc
       tmux
       go
       go-tools
+      fontconfig
       go-outline
       gopls
       gopkgs
@@ -155,11 +166,6 @@ in {
     ];
 
     envExtra = ''
-      if [[ $OSTYPE == 'darwin'* ]]; then
-        source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-        export NIX_PATH=$HOME/.nix-defexpr/channels:$NIX_PATH
-        eval "$(/usr/local/bin/brew shellenv)";
-      fi
     '';
 
     initExtra = ''
@@ -176,6 +182,10 @@ in {
         echo "Starting pyenv: $1"
         python3 -m venv $1 && source $1/bin/activate
       }
+
+      if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
+      	. '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+      fi
 
       # set up pure
       autoload -U promptinit
