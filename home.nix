@@ -1,88 +1,139 @@
 { pkgs, config, lib, ... }:
 
 let
-  inherit (lib) mkMerge;
   git_userName = "Ang Wei Neng";
-  git_userEmail = "weineng.a@gmail.com";
+  git_userEmail = "weineng@twosigma.com";
   git_signing_key = "1C3A31CF1EB43ABC1766DB2F1C8D1EA6010A15FC";
+
+  zsh_initExtra = ''
+    if [[ $OSTYPE == 'darwin'* ]]; then
+      source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+      export NIX_PATH=$HOME/.nix-defexpr/channels:$NIX_PATH
+      eval "$(/usr/local/bin/brew shellenv)";
+    fi
+
+    TZ='America/New_York'; export TZ;
+    LC_ALL=en_US.UTF-8
+  '';
 in {
   nixpkgs.config.allowUnfree = true;
-  # nixpkgs.config.allowBroken = true;
+
   fonts.fontconfig.enable = true;
   home.file.".doom.d".source = ./doom.d;
+
+  # services.emacs = { enable = true; };
+
   home = {
     username = builtins.getEnv "USER";
     homeDirectory = builtins.getEnv "HOME";
     stateVersion = "20.09";
     packages = with pkgs; [
-      ripgrep
-      virtualenv
-      silver-searcher
-      irony-server
-      readline
-      ccls
-      glslang
-      fd
-      jq
-      zsh
-      fzf
-      pylint
-      # exa
-      # vscode
-      emacs
-      htop
-      nixfmt
-      curl
-      wget
-      hub
-      gnupg
-      pinentry
+      python3Packages.pylint
+      python3Packages.pyflakes
+      python3Packages.matplotlib
+      python3Packages.numpy
+      python3Packages.pygments
+      python3Packages.isort
+      python3Packages.pytest
+      python3Packages.nose
+
+      nodePackages.pyright
+
       bash
-      shellcheck
-      mosh
-      pandoc
-      tmux
+      cmake
+      coreutils
+      curl
+      emacs28NativeComp
+      exa
+      fd
+      fzf
+      gnupg
       go
-      go-tools
-      fontconfig
       go-outline
-      gopls
+      go-tools
       gopkgs
+      gopls
+      htop
+      hub
+      jq
+      mosh
+      nixfmt
       nmap
+      pinentry
+      pipenv
+      ripgrep
+      tmux
+      wget
+      zsh
+
+      libgccjit
+      gcc11
+
+      # pdfviewer for emacs
+      libpng12
+      zlib
+      pkgconfig
+      poppler
+
+      # rust specific packages
+      rustc
+      rust-analyzer
+      clippy
+      emacs28Packages.rustic
+      cargo-edit
+      cargo
+
+      # latex
+      texlive.combined.scheme-full
+      mplayer
+
+      # fonts
+      iosevka
+      roboto
+      roboto-mono
+      jetbrains-mono
+      iosevka
+      libre-baskerville
+
+      hugo
+
+      poppler
+      automake
+      pkg-config
+
     ];
   };
-
-  imports = [  ];
-
   programs.git = {
     enable = true;
     userName = git_userName;
     userEmail = git_userEmail;
-    iniContent = {
-      commit.gpgSign = git_signing_key != "";
-      signing.key = git_signing_key;
-    };
-    ignores =
-      [ "*.log" "*.DS_Store" "*.sql" "*.sqlite" "*.DS_Store*" "*.idea" ];
+    ignores = [
+      "*.log"
+      "*.DS_Store"
+      "*.sql"
+      "*.sqlite"
+      "*.DS_Store*"
+      "*.vscode"
+      "*.code-workspace"
+      "compile_commands.json"
+      ".clangd"
+    ];
     aliases = {
       st = "status";
       root = "rev-parse --show-toplevel";
     };
     extraConfig = {
-      core = {
-        autocrlf = false;
-        editor = "vim";
-      };
+      core = { autocrlf = false; };
 
       pull.rebase = true;
       init.defaultBranch = "main";
       status = { submodulesummary = true; };
+      diff = { submodule = "log"; };
       gpg = { program = "gpg"; };
     };
   };
 
   programs.zsh = {
-    # https://github.com/nix-community/home-manager/blob/master/modules/programs/zsh.nix
     enable = true;
     autocd = true;
     dotDir = ".config/zsh";
@@ -90,37 +141,46 @@ in {
     enableCompletion = false;
 
     shellAliases = {
-      ls = "ls";
-      sl = "ls";
-      l = "ls -l";
-      la = "ls -la";
+      sl = "exa";
+      ls = "exa";
+      l = "exa -l";
+      la = "exa -la";
 
       # git aliases
       git = "git";
-      gco = "git checkout";
-      gst = "git status";
-      gcmsg = "git commit -m";
-      gcb = "git checkout -b";
-      gaa = "git add .";
-      ga = "git add";
-      gcm = "git checkout master";
-      gca = "git commit --amend --no-edit";
-      gd = "git diff";
-      gaaa = "gaa && gca && gp";
-      gl = "git log";
-      glg = "git log --all --decorate --oneline --graph";
-      gdc = "git diff --cached";
-      gp = "git push";
+      gm = "git";
+      gco = "gm checkout";
+      gst = "gm status";
+      gcmsg = "gm commit -m";
+      gcb = "gm checkout -b";
+      gaa = "gm add $(git root)";
+      ga = "gm add";
+      gcm = "gm checkout master";
+      gca = "gm commit --amend";
+      gd = "gm diff";
+      gaaa =
+        "gaa && gm commit --amend --no-edit && gm push -f && tsdev pr update";
+      gl = "gm log --decorate --graph";
+      gdc = "gm diff --cached";
+      gb = "gm branch";
+      gpu = "gm pull --rebase upstream master";
+      gba = "gm branch -a";
+      cdr = "cd $(git root)";
 
       # nix-os alias
-      reset = ''
+      rr = ''
         nix-shell -p home-manager --run "home-manager -f ~/.dotconfig/home.nix switch" && exec zsh'';
 
+      # emacs alias
+      em = "emacs &";
+      doom = "~/.emacs.d/bin/doom";
+      doomsync = "reset && doom sync";
+
       # Force g++ compiler to show all warnings and use C++11
-      gpp = "g++ -Wall - Weffc ++ -std=c++11 -Wextra -Wsign-conversion";
+      gpp = "g ++ -Wall - Weffc ++ -std=c++11 -Wextra -Wsign-conversion";
     };
 
-    localVariables = { EDITOR = "vim"; };
+    localVariables = { EDITOR = "nano"; };
 
     plugins = with pkgs; [
       {
@@ -154,6 +214,16 @@ in {
         file = "zsh-syntax-highlighting.zsh";
       }
       {
+        name = "zsh-autopair";
+        src = fetchFromGitHub {
+          owner = "hlissner";
+          repo = "zsh-autopair";
+          rev = "34a8bca0c18fcf3ab1561caef9790abffc1d3d49";
+          sha256 = "1h0vm2dgrmb8i2pvsgis3lshc5b0ad846836m62y8h3rdb3zmpy1";
+        };
+        file = "autopair.zsh";
+      }
+      {
         name = "pure";
         src = fetchFromGitHub {
           owner = "sindresorhus";
@@ -165,9 +235,6 @@ in {
       }
     ];
 
-    envExtra = ''
-    '';
-
     initExtra = ''
       function pwd() {
         printf "%q\n" "$(builtin pwd)"
@@ -178,24 +245,15 @@ in {
         builtin cd $@ && ls
       }
 
-      function pyenv() {
-        echo "Starting pyenv: $1"
-        python3 -m venv $1 && source $1/bin/activate
-      }
-
-      if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
-      	. '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
-      fi
-
       # set up pure
       autoload -U promptinit
       promptinit
       prompt pure
-
-      export PATH="$PATH:$HOME/.emacs.d/bin"
-
       zstyle :prompt:pure:git:stash show yes
-    '';
+
+      zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+      setopt MENU_COMPLETE
+    '' + zsh_initExtra;
   };
 
   programs.home-manager = { enable = true; };
@@ -203,6 +261,11 @@ in {
   programs.fzf = {
     enable = true;
     enableZshIntegration = true;
+  };
+
+  programs.tmux = {
+    enable = true;
+    shortcut = "u";
   };
 
   # Scripts

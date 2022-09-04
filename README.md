@@ -2,7 +2,7 @@
 
 ## Nix home-manager setup
 
-Configure personal settings in `configs.nix`
+Configure personal settings in `home.nix`
 
 ### Linux
 
