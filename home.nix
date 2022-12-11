@@ -1,52 +1,43 @@
 { pkgs, config, lib, ... }:
-
 let
-  git_userName = "Ang Wei Neng";
-  git_userEmail = "weineng@twosigma.com";
-  git_signing_key = "1C3A31CF1EB43ABC1766DB2F1C8D1EA6010A15FC";
-
-  zsh_initExtra = ''
-    if [[ $OSTYPE == 'darwin'* ]]; then
-      source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-      export NIX_PATH=$HOME/.nix-defexpr/channels:$NIX_PATH
-      eval "$(/usr/local/bin/brew shellenv)";
-    fi
-
-    TZ='America/New_York'; export TZ;
-    LC_ALL=en_US.UTF-8
-  '';
 in {
+  imports = [ ];
+
   nixpkgs.config.allowUnfree = true;
-
   fonts.fontconfig.enable = true;
-  home.file.".doom.d".source = ./doom.d;
 
-  # services.emacs = { enable = true; };
+  # services.emacs = {
+  #   enable = true;
+  # };
 
   home = {
-    username = builtins.getEnv "USER";
-    homeDirectory = builtins.getEnv "HOME";
+    username = "weineng";
+    homeDirectory = "/Users/weineng";
     stateVersion = "20.09";
     packages = with pkgs; [
-      python3Packages.pylint
-      python3Packages.pyflakes
-      python3Packages.matplotlib
-      python3Packages.numpy
-      python3Packages.pygments
-      python3Packages.isort
-      python3Packages.pytest
-      python3Packages.nose
+      (python39.withPackages (p: with p; [
+        isort
+        matplotlib
+        nose
+        numpy
+        pyflakes
+        pygments
+        pytest
+        pylint
+      ]))
 
       nodePackages.pyright
+      nodePackages.mathjax
 
       bash
-      cmake
+      ccls
       coreutils
       curl
       emacs28NativeComp
       exa
       fd
       fzf
+      git
       gnupg
       go
       go-outline
@@ -55,19 +46,24 @@ in {
       gopls
       htop
       hub
+      hugo
+      hyperfine
+      imagemagick
       jq
       mosh
+      mplayer
       nixfmt
       nmap
       pinentry
       pipenv
       ripgrep
+      R
+      # rstudio
+      sqlite
+      texlive.combined.scheme-full
       tmux
       wget
       zsh
-
-      libgccjit
-      gcc11
 
       # pdfviewer for emacs
       libpng12
@@ -75,60 +71,59 @@ in {
       pkgconfig
       poppler
 
-      # rust specific packages
-      rustc
-      rust-analyzer
-      clippy
-      emacs28Packages.rustic
-      cargo-edit
+      # rust
       cargo
-
-      # latex
-      texlive.combined.scheme-full
-      mplayer
+      cargo-edit
+      clippy
+      rust-analyzer
+      rustc
 
       # fonts
       iosevka
+      jetbrains-mono
+      libre-baskerville
       roboto
       roboto-mono
-      jetbrains-mono
       iosevka
-      libre-baskerville
-
-      hugo
-
-      poppler
-      automake
-      pkg-config
-
     ];
   };
+
   programs.git = {
     enable = true;
-    userName = git_userName;
-    userEmail = git_userEmail;
+    userName = "Ang Wei Neng";
+    userEmail = "weineng.a@gmail.com";
     ignores = [
-      "*.log"
       "*.DS_Store"
+      "*.DS_Store*"
+      "*.code-workspace"
+      "*.log"
       "*.sql"
       "*.sqlite"
-      "*.DS_Store*"
       "*.vscode"
-      "*.code-workspace"
-      "compile_commands.json"
+      ".ccls-cache"
       ".clangd"
+      ".gitmodules"
+      ".projectile"
+      ".test-all.v1.sqlite3"
+      ".testlist"
+      "compile_commands.json"
+      "compile_commands.zsh"
     ];
     aliases = {
       st = "status";
       root = "rev-parse --show-toplevel";
     };
     extraConfig = {
-      core = { autocrlf = false; };
+      core ={
+        autocrlf = false;
+      };
 
       pull.rebase = true;
       init.defaultBranch = "main";
       status = { submodulesummary = true; };
-      diff = { submodule = "log"; };
+      diff = {
+        submodule = "diff";
+      };
       gpg = { program = "gpg"; };
     };
   };
@@ -138,7 +133,9 @@ in {
     autocd = true;
     dotDir = ".config/zsh";
     enableAutosuggestions = true;
-    enableCompletion = false;
+    enableSyntaxHighlighting = true;
+
+    enableCompletion = true;
 
     shellAliases = {
       sl = "exa";
@@ -147,25 +144,26 @@ in {
       la = "exa -la";
 
       # git aliases
-      git = "git";
       gm = "git";
       gco = "gm checkout";
       gst = "gm status";
       gcmsg = "gm commit -m";
       gcb = "gm checkout -b";
-      gaa = "gm add $(git root)";
+      gaa = "gm add $(gm root)";
       ga = "gm add";
       gcm = "gm checkout master";
       gca = "gm commit --amend";
       gd = "gm diff";
-      gaaa =
-        "gaa && gm commit --amend --no-edit && gm push -f && tsdev pr update";
+      gaaa = "gaa && gm commit --amend --no-edit && gm push -f && tsdev pr update";
+      gp = "gm push -f && tsdev pr update";
+      gpsup = "gm push && tsdev pr create --jira";
       gl = "gm log --decorate --graph";
       gdc = "gm diff --cached";
       gb = "gm branch";
       gpu = "gm pull --rebase upstream master";
       gba = "gm branch -a";
-      cdr = "cd $(git root)";
+      cdr = "cd $(gm root)";
+      grhh = "gm reset --hard";
 
       # nix-os alias
       rr = ''
@@ -174,10 +172,18 @@ in {
       # emacs alias
       em = "emacs &";
       doom = "~/.emacs.d/bin/doom";
-      doomsync = "reset && doom sync";
 
-      # Force g++ compiler to show all warnings and use C++11
-      gpp = "g ++ -Wall - Weffc ++ -std=c++11 -Wextra -Wsign-conversion";
+      # Force g++ compiler to show all warnings and use C++20
+      gpp = "g++ -Wall -Weffc++ -std=c++20 -Wextra -Wsign-conversion";
+
+      # two sigma specific alias
+      braindump = "cd ~/.org/braindump && make";
+      bump = "cd ~/main/ts/mmia/bump/";
+      install = "gssproxy2 fixedout";
+      t = "./bin/tstest";
+      tb = "tsdev build";
+      tsi = "cd ~/main/ts/tss/integration";
+      tt = "tsdev test";
     };
 
     localVariables = { EDITOR = "nano"; };
@@ -187,10 +193,10 @@ in {
         name = "zsh-nix-shell";
         file = "nix-shell.plugin.zsh";
         src = pkgs.fetchFromGitHub {
-          owner = "chisui";
-          repo = "zsh-nix-shell";
-          rev = "v0.5.0";
-          sha256 = "0za4aiwwrlawnia4f29msk822rj9bgcygw6a8a6iikiwzjjz0g91";
+          owner = "chisui"; 
+          repo = "zsh-nix-shell"; 
+          rev = "v0.5.0"; 
+          sha256 = "0za4aiwwrlawnia4f29msk822rj9bgcygw6a8a6iikiwzjjz0g91"; 
         };
       }
       {
@@ -234,7 +240,6 @@ in {
         file = "pure.zsh";
       }
     ];
-
     initExtra = ''
       function pwd() {
         printf "%q\n" "$(builtin pwd)"
@@ -245,15 +250,50 @@ in {
         builtin cd $@ && ls
       }
 
+      function pyenv() {
+        echo "Starting pyenv: $1"
+        python3 -m venv $1 && source $1/bin/activate
+      }
+
       # set up pure
       autoload -U promptinit
       promptinit
       prompt pure
       zstyle :prompt:pure:git:stash show yes
 
-      zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+      autoload -Uz compinit && compinit
+      zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
       setopt MENU_COMPLETE
-    '' + zsh_initExtra;
+
+      if [[ $OSTYPE == 'darwin'* ]]; then
+         source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+         export NIX_PATH=$HOME/.nix-defexpr/channels:$NIX_PATH
+         eval "$(/usr/local/bin/brew shellenv)";
+      fi
+
+      # two sigma specific stuff
+      if [[ $(hostname -d) = *twosigma.com ]]; then
+         source /nix/setup-nix.sh
+         export TZ='America/New_York';
+         export no_proxy="twosigma.com,*.twosigma.com,127.0.0.1,localhost";
+
+         # install packages blocked by 2s
+         # gssproxy2 -e nix-env --file https://github.com/catern/nix-utils/archive/master.tar.gz --install
+         # gssproxy2 nix-env --file https://github.com/guibou/nixGL/archive/main.tar.gz -iA auto.nixGLDefault
+      fi
+      export PATH="$HOME/.config/scripts":"$HOME/dotfiles/.bin":$PATH
+
+      # from http://www.catern.com/pipes.html
+      # pad to the maximize size we can do and still be atomic on this system
+      pipe_buf=$(getconf PIPE_BUF /)
+      function pad() {
+          # redirect stderr (file descriptor 2) to /dev/null to get rid of noise
+          dd conv=block cbs=$pipe_buf obs=$pipe_buf 2>/dev/null
+      }
+      function unpad() {
+          dd conv=unblock cbs=$pipe_buf ibs=$pipe_buf 2>/dev/null
+      }
+    '';
   };
 
   programs.home-manager = { enable = true; };
@@ -269,6 +309,8 @@ in {
   };
 
   # Scripts
-  # home.file.".config/zsh/scripts".source = ./files/scripts;
-  # home.file.".config/zsh/scripts".recursive = true;
+  # home.file.".config/scripts".source = ./files/scripts;
+  # home.file.".config/scripts".recursive = true;
+  # home.sessionPath = ["$HOME/.config/scripts" "$HOME/dotfiles/.bin"];
+  # home.file.".doom.d".source = ./doom.d;
 }
