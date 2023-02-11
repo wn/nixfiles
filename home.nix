@@ -6,9 +6,10 @@ in {
   nixpkgs.config.allowUnfree = true;
   fonts.fontconfig.enable = true;
 
-  # services.emacs = {
-  #   enable = true;
-  # };
+  #services.emacs = {
+  #  enable = true;
+  #  defaultEditor = true;
+  #};
 
   home = {
     username = "weineng";
@@ -31,12 +32,16 @@ in {
 
       bash
       ccls
+      hwloc
       coreutils
       curl
       emacs28NativeComp
       exa
       fd
       fzf
+      flamegraph
+      clang
+      clang-tools
       git
       gnupg
       go
@@ -45,11 +50,11 @@ in {
       gopkgs
       gopls
       htop
-      hub
       hugo
       hyperfine
       imagemagick
       jq
+      llvm
       mosh
       mplayer
       nixfmt
@@ -58,17 +63,17 @@ in {
       pipenv
       ripgrep
       R
-      # rstudio
       sqlite
       texlive.combined.scheme-full
       tmux
       wget
       zsh
+      libGL
 
       # pdfviewer for emacs
-      libpng12
-      zlib
-      pkgconfig
+      emacsPackages.pdf-tools
+      cairo
+      libpng
       poppler
 
       # rust
@@ -84,7 +89,8 @@ in {
       libre-baskerville
       roboto
       roboto-mono
-      iosevka
+
+      librsvg
     ];
   };
 
@@ -108,6 +114,7 @@ in {
       ".testlist"
       "compile_commands.json"
       "compile_commands.zsh"
+      ".tspkg"
     ];
     aliases = {
       st = "status";
@@ -116,15 +123,18 @@ in {
     extraConfig = {
       core ={
         autocrlf = false;
+        editor = "emacs -nw -Q -f menu-bar-mode";
       };
-
       pull.rebase = true;
+      http.emptyauth = true;
       init.defaultBranch = "main";
       status = { submodulesummary = true; };
       diff = {
         submodule = "diff";
       };
-      gpg = { program = "gpg"; };
+      gpg = {
+        program = "gpg";
+      };
     };
   };
 
@@ -134,7 +144,6 @@ in {
     dotDir = ".config/zsh";
     enableAutosuggestions = true;
     enableSyntaxHighlighting = true;
-
     enableCompletion = true;
 
     shellAliases = {
@@ -144,7 +153,7 @@ in {
       la = "exa -la";
 
       # git aliases
-      gm = "git";
+      gm = "git-meta";
       gco = "gm checkout";
       gst = "gm status";
       gcmsg = "gm commit -m";
@@ -167,36 +176,30 @@ in {
 
       # nix-os alias
       rr = ''
-        nix-shell -p home-manager --run "home-manager -f ~/.dotconfig/home.nix switch" && exec zsh'';
+        nix-shell -p home-manager --run "home-manager -f ~/nixfiles/home.nix switch" && exec zsh'';
+      rrc = "nix-env --delete-generations old && nix-store --gc";
 
-      # emacs alias
       em = "emacs &";
+      e = "emacs -nw";
       doom = "~/.emacs.d/bin/doom";
 
       # Force g++ compiler to show all warnings and use C++20
-      gpp = "g++ -Wall -Weffc++ -std=c++20 -Wextra -Wsign-conversion";
-
-      # two sigma specific alias
-      braindump = "cd ~/.org/braindump && make";
-      bump = "cd ~/main/ts/mmia/bump/";
-      install = "gssproxy2 fixedout";
-      t = "./bin/tstest";
-      tb = "tsdev build";
-      tsi = "cd ~/main/ts/tss/integration";
-      tt = "tsdev test";
+      gpp = "g++ -Wall - Weffc ++ -std=c++20 -Wextra -Wsign-conversion";
     };
 
-    localVariables = { EDITOR = "nano"; };
+    localVariables = {
+      EDITOR = "emacs -nw";
+    };
 
     plugins = with pkgs; [
       {
         name = "zsh-nix-shell";
         file = "nix-shell.plugin.zsh";
         src = pkgs.fetchFromGitHub {
-          owner = "chisui"; 
-          repo = "zsh-nix-shell"; 
-          rev = "v0.5.0"; 
-          sha256 = "0za4aiwwrlawnia4f29msk822rj9bgcygw6a8a6iikiwzjjz0g91"; 
+          owner = "chisui";
+          repo = "zsh-nix-shell";
+          rev = "v0.5.0";
+          sha256 = "0za4aiwwrlawnia4f29msk822rj9bgcygw6a8a6iikiwzjjz0g91";
         };
       }
       {
@@ -220,16 +223,6 @@ in {
         file = "zsh-syntax-highlighting.zsh";
       }
       {
-        name = "zsh-autopair";
-        src = fetchFromGitHub {
-          owner = "hlissner";
-          repo = "zsh-autopair";
-          rev = "34a8bca0c18fcf3ab1561caef9790abffc1d3d49";
-          sha256 = "1h0vm2dgrmb8i2pvsgis3lshc5b0ad846836m62y8h3rdb3zmpy1";
-        };
-        file = "autopair.zsh";
-      }
-      {
         name = "pure";
         src = fetchFromGitHub {
           owner = "sindresorhus";
@@ -240,6 +233,7 @@ in {
         file = "pure.zsh";
       }
     ];
+
     initExtra = ''
       function pwd() {
         printf "%q\n" "$(builtin pwd)"
@@ -253,6 +247,13 @@ in {
       function pyenv() {
         echo "Starting pyenv: $1"
         python3 -m venv $1 && source $1/bin/activate
+      }
+
+      # check that PATH don't contain dir before prepending.
+      function pathadd() {
+        if [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]]; then
+          PATH="''${PATH:+"$PATH:"}$1"
+        fi
       }
 
       # set up pure
@@ -271,17 +272,12 @@ in {
          eval "$(/usr/local/bin/brew shellenv)";
       fi
 
-      # two sigma specific stuff
-      if [[ $(hostname -d) = *twosigma.com ]]; then
-         source /nix/setup-nix.sh
-         export TZ='America/New_York';
-         export no_proxy="twosigma.com,*.twosigma.com,127.0.0.1,localhost";
-
-         # install packages blocked by 2s
-         # gssproxy2 -e nix-env --file https://github.com/catern/nix-utils/archive/master.tar.gz --install
-         # gssproxy2 nix-env --file https://github.com/guibou/nixGL/archive/main.tar.gz -iA auto.nixGLDefault
+      if [[ ! -d "$HOME/.emacs.d/" ]]; then
+        echo "Emacs not installed yet"
+        git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.emacs.d
+        git clone https://github.com/wn/doom.d ~/.doom.d
+        ~/.emacs.d/bin/doom install
       fi
-      export PATH="$HOME/.config/scripts":"$HOME/dotfiles/.bin":$PATH
 
       # from http://www.catern.com/pipes.html
       # pad to the maximize size we can do and still be atomic on this system
@@ -293,10 +289,19 @@ in {
       function unpad() {
           dd conv=unblock cbs=$pipe_buf ibs=$pipe_buf 2>/dev/null
       }
+
+      function flame() {
+          perf record -g --call-graph fp -- g++
+          perf script | stackcollapse-perf.pl > out.perf-folded;
+          flamegraph.pl out.perf-folded > perf.svg;
+          rm out.perf-folded perf.data;
+      }
     '';
   };
 
-  programs.home-manager = { enable = true; };
+  programs.home-manager = {
+    enable = true;
+  };
 
   programs.fzf = {
     enable = true;
@@ -308,9 +313,8 @@ in {
     shortcut = "u";
   };
 
-  # Scripts
-  # home.file.".config/scripts".source = ./files/scripts;
-  # home.file.".config/scripts".recursive = true;
-  # home.sessionPath = ["$HOME/.config/scripts" "$HOME/dotfiles/.bin"];
-  # home.file.".doom.d".source = ./doom.d;
+#   # Scripts
+#   home.file.".config/scripts".source = ./files/scripts;
+#   home.file.".config/scripts".recursive = true;
+#   home.sessionPath = ["$HOME/.config/scripts" "$HOME/dotfiles/.bin"];
 }
