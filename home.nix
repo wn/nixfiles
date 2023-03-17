@@ -32,6 +32,7 @@ in {
 
       bash
       ccls
+      cmake
       hwloc
       coreutils
       curl
@@ -40,8 +41,8 @@ in {
       fd
       fzf
       flamegraph
-      clang
-      clang-tools
+      # clang
+      # clang-tools
       git
       gnupg
       go
@@ -184,7 +185,7 @@ in {
       doom = "~/.emacs.d/bin/doom";
 
       # Force g++ compiler to show all warnings and use C++20
-      gpp = "g++ -Wall - Weffc ++ -std=c++20 -Wextra -Wsign-conversion";
+      gpp = "clang++ -Wall -Weffc++ -std=c++20 -Wextra -Wsign-conversion";
     };
 
     localVariables = {

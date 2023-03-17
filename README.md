@@ -1,4 +1,4 @@
-# .dotconfig
+# nixfiles
 
 ## Nix home-manager setup
 
@@ -9,7 +9,7 @@ Configure personal settings in `home.nix`
 ```bash
 curl -L https://nixos.org/nix/install | sh # run as non-root
 export NIX_PATH=~/.nix-defexpr/channels
-nix-shell -p home-manager --run "home-manager -f ~/.dotconfig/home.nix switch" && exec zsh
+nix-shell -p home-manager --run "home-manager -f ~/nixfiles/home.nix switch" && exec zsh
 ```
 
 ### MacOS
@@ -26,5 +26,5 @@ nix-channel --add https://github.com/LnL7/nix-darwin/archive/master.tar.gz darwi
 nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
 nix-channel --update
 bash
-nix-shell -p home-manager --run "home-manager -f ~/.dotconfig/home.nix switch" && exec zsh
+nix-shell -p home-manager --run "home-manager -f ~/nixfiles/home.nix switch" && exec zsh
 ```
