@@ -82,6 +82,7 @@ in {
       wget
       zsh
       libGL
+      pass
       gotty
 
       # pdfviewer for emacs
@@ -184,8 +185,8 @@ in {
       gca = "gm commit --amend";
       gd = "gm diff";
       gaaa = "gaa && gm commit --amend --no-edit && gm push -f";
-      gp = "gm push -f && tsdev pr update";
-      gpsup = "gm push && tsdev pr create --jira";
+      gp = "gm push";
+      gpsup = "gm push";
       gl = "gm log --decorate --graph";
       gdc = "gm diff --cached";
       gb = "gm branch";
