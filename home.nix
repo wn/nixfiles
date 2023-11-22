@@ -113,7 +113,7 @@ in {
 
   programs.git = {
     enable = true;
-    userName = "Ang Wei Neng";
+    userName = "Wei Neng Ang";
     userEmail = "weineng.a@gmail.com";
     ignores = [
       "*.DS_Store"
