@@ -1,19 +1,24 @@
 { pkgs, config, lib, ... }:
 let
 in {
+  nixpkgs.overlays = [
+    (self: super: {
+      fcitx-engines = pkgs.fcitx5;
+    })
+  ];
   imports = [ ];
 
   nixpkgs.config.allowUnfree = true;
   fonts.fontconfig.enable = true;
 
-  # services.emacs = {
-  #    enable = true;
-  #    defaultEditor = true;
-  # };
+  services.emacs = {
+     enable = true;
+     defaultEditor = true;
+  };
 
   home = {
     username = "weineng";
-    homeDirectory = "/Users/weineng";
+    homeDirectory = "/home/weineng";
     stateVersion = "20.09";
     packages = with pkgs; [
       (python39.withPackages (p: with p; [
@@ -26,6 +31,7 @@ in {
         pytest
         pylint
         flask
+        compiledb
       ]))
 
       nodePackages.pyright
@@ -33,26 +39,27 @@ in {
 
       emacsPackages.compat
 
-      clang-tools
-      bash
       bazel
+      bash
       ccls
       coreutils
       curl
+      nodejs_20
       emacs29
       delta
-      eza
+      exa
       fd
       fzf
       flamegraph
-      gcc
-      qemu
-      nasm
+      clang
+      clang-tools
       git
       gnupg
       go
       go-outline
       go-tools
+      docker
+      docker-compose
       gopkgs
       gopls
       htop
@@ -68,12 +75,14 @@ in {
       pipenv
       ripgrep
       R
+      rstudio
       sqlite
       texlive.combined.scheme-full
       tmux
       wget
       zsh
       libGL
+      gotty
 
       # pdfviewer for emacs
       emacsPackages.pdf-tools
@@ -87,6 +96,7 @@ in {
       clippy
       rust-analyzer
       rustc
+      ninja
 
       # fonts
       iosevka
@@ -103,7 +113,7 @@ in {
   programs.git = {
     enable = true;
     userName = "Ang Wei Neng";
-    userEmail = "weineng@twosigma.com";
+    userEmail = "weineng.a@gmail.com";
     ignores = [
       "*.DS_Store"
       "*.DS_Store*"
@@ -122,6 +132,10 @@ in {
       "compile_commands.json"
       "compile_commands.zsh"
       "flycheck_*"
+      "CMakeFiles"
+      "*.cmake"
+      "CMakeCache.txt"
+      "build.ninja"
     ];
     aliases = {
       st = "status";
@@ -154,11 +168,11 @@ in {
     enableCompletion = true;
 
     shellAliases = {
-      ls = "eza";
-      l = "eza -l";
-      la = "eza -la";
+      ls = "exa";
+      l = "exa -l";
+      la = "exa -la";
 
-      # git-meta aliases
+      # git aliases
       gm = "git";
       gco = "gm checkout";
       gst = "gm status";
@@ -169,7 +183,7 @@ in {
       gcm = "gm checkout master";
       gca = "gm commit --amend";
       gd = "gm diff";
-      gaaa = "gaa && gm commit --amend --no-edit && gm push -f && tsdev pr update";
+      gaaa = "gaa && gm commit --amend --no-edit && gm push -f";
       gp = "gm push -f && tsdev pr update";
       gpsup = "gm push && tsdev pr create --jira";
       gl = "gm log --decorate --graph";
@@ -180,28 +194,28 @@ in {
       cdr = "builtin cd $(gm root)";
       grhh = "gm reset --hard";
       gss = "gm submodule status";
-      goc = "git-meta open -c $(git-meta rev-parse HEAD)";
+      goc = "gm open -c $(gm rev-parse HEAD)";
 
       # nix-os alias
       rr = ''
         nix-shell -p home-manager --run "home-manager -f ~/nixfiles/home.nix switch" && exec zsh'';
       rrc = "nix-env --delete-generations old && nix-store --gc";
 
-      em = "emacsclient -c -n &";
-      e = "emacsclient -c -n";
-      doom = "gssproxy2 ~/.emacs.d/bin/doom";
+      em = "emacs -nw";
+      e = "emacs -nw";
+      doom = "~/.emacs.d/bin/doom";
 
       # Force g++ compiler to show all warnings and use C++20
       gpp = "g++ -Wall -Weffc++ -std=c++2a -Wextra -Wsign-conversion";
 
       # two sigma specific alias
-      braindump = "builtin cd ~/.org/braindump && make";
-      bump = "cdr && builtin cd ts/mmia/bump/";
-      mra = "make realclean all";
-      mara = "make-all realclean all";
-      t = "./bin/tstest";
-      tsi = "cdr && builtin cd ts/tss/integration";
-      tt = "tsdev test";
+      # braindump = "builtin cd ~/.org/braindump && make";
+      # bump = "cdr && builtin cd ts/mmia/bump/";
+      # mra = "make realclean all";
+      # mara = "make-all realclean all";
+      # t = "./bin/tstest";
+      # tsi = "cdr && builtin cd ts/tss/integration";
+      # tt = "tsdev test";
     };
 
     plugins = with pkgs; [
@@ -263,6 +277,7 @@ in {
           PATH="''${PATH:+"$PATH:"}$1"
         fi
       }
+
       export TERM=xterm-256color
       export TERMCAP=
       # set up pure
@@ -312,6 +327,13 @@ in {
           flamegraph.pl out.perf-folded > perf.svg;
           rm out.perf-folded perf.data;
       }
+
+      # xclip issue causing ERROR: target STRING not available: https://github.com/astrand/xclip/issues/38
+      if [ ! -z "$DISPLAY" ] ; then
+          echo "$DISPLAY" > "$HOME/.most-recent-display"
+      elif [ -r "$HOME/.most-recent-display" ] ; then
+          export DISPLAY=$(cat "$HOME/.most-recent-display")
+      fi
     '';
   };
 
@@ -330,76 +352,7 @@ in {
   };
 
   # Scripts
-  # home.file.".config/scripts".source = ./files/scripts;
-  # home.file.".config/scripts".recursive = true;
-  # home.sessionPath = ["$HOME/.config/scripts" "$HOME/dotfiles/.bin"];
-    nixpkgs.overlays = [
-    (self: super: {
-      libGL =
-        let
-          inherit (self) lib stdenv libglvnd testers;
-          inherit (self.darwin.apple_sdk.frameworks) OpenGL;
-        in
-        stdenv.mkDerivation (finalAttrs: {
-          pname = "libGL";
-          version = if stdenv.hostPlatform.isDarwin then "4.1" else libglvnd.version;
-          outputs = [ "out" "dev" ];
-
-          # On macOS, libglvnd is not supported, and mesa no longer builds (but it only
-          # provided a software renderer anyway). Provide the OpenGL framework as well
-          # as a pkg-config file for OpenGL.framework.
-          # GLX is not supported nor is OpenGL ES.
-          buildCommand = if stdenv.hostPlatform.isDarwin then ''
-            mkdir -p $out/nix-support $dev/lib/pkgconfig $dev/nix-support
-            echo ${OpenGL} >> $out/nix-support/propagated-build-inputs
-            echo "$out" > $dev/nix-support/propagated-build-inputs
-            mkdir -p $dev/include
-            ln -s ${OpenGL}/Library/Frameworks/OpenGL.framework/Headers $dev/include/GL
-            cat <<EOF >$dev/lib/pkgconfig/gl.pc
-          Name: gl
-          Description: gl library
-          Version: 4.1
-          Libs: -F${OpenGL} -framework OpenGL
-          Cflags: -F${OpenGL} -DAPIENTRY=GLAPIENTRY
-          EOF
-          ''
-
-          # Otherwise, setup gl stubs to use libglvnd.
-          else ''
-            mkdir -p $out/nix-support
-            ln -s ${libglvnd.out}/lib $out/lib
-            mkdir -p $dev/{,lib/pkgconfig,nix-support}
-            echo "$out ${libglvnd} ${libglvnd.dev}" > $dev/nix-support/propagated-build-inputs
-            ln -s ${libglvnd.dev}/include $dev/include
-            genPkgConfig() {
-              local name="$1"
-              local lib="$2"
-              cat <<EOF >$dev/lib/pkgconfig/$name.pc
-            Name: $name
-            Description: $lib library
-            Version: ${libglvnd.version}
-            Libs: -L${libglvnd.out}/lib -l$lib
-            Cflags: -I${libglvnd.dev}/include
-            EOF
-            }
-            genPkgConfig gl GL
-            genPkgConfig egl EGL
-            genPkgConfig glesv1_cm GLESv1_CM
-            genPkgConfig glesv2 GLESv2
-          '';
-
-          passthru.tests.pkg-config = testers.testMetaPkgConfig finalAttrs.finalPackage;
-
-          meta = {
-            description = "Stub bindings using " + (if stdenv.hostPlatform.isDarwin then "OpenGL.framework" else "libglvnd");
-            pkgConfigModules = [ "gl" ] ++ lib.optionals (!stdenv.hostPlatform.isDarwin) [ "egl" "glesv1_cm" "glesv2" ];
-          } // (if stdenv.hostPlatform.isDarwin
-            then { inherit (OpenGL.meta) homepage platforms; }
-            else { inherit (libglvnd.meta) homepage license platforms; });
-        });
-    })
-    (self: super: {
-      fcitx-engines = pkgs.fcitx5;
-    })
-  ];
+  home.file.".config/scripts".source = ./files/scripts;
+  home.file.".config/scripts".recursive = true;
+  home.sessionPath = ["$HOME/.config/scripts" "$HOME/dotfiles/.bin"];
 }
