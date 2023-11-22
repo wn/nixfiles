@@ -177,7 +177,7 @@ in {
       gm = "git";
       gco = "gm checkout";
       gst = "gm status";
-      gcmsg = "gm commit -m";
+      gcmsg = "gm commit -S -m";
       gcb = "gm checkout -b";
       gaa = "gm add $(gm root)";
       ga = "gm add";
