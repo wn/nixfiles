@@ -1,0 +1,31 @@
+#!/usr/bin/env zsh
+
+# Description: Generates a `shell.nix` file in the current directory
+# Usage: ./generate-nix.sh bash
+
+set -euo pipefail
+
+if [[ $# -ne 1 ]]; then
+  echo "Usage: $0 <shell-name>"
+  exit 1
+fi
+
+SHELL_NAME="$1"
+
+if [[ -e shell.nix ]]; then
+  echo "❌ Error: shell.nix already exists in the current directory."
+  exit 1
+fi
+
+
+cat > shell.nix <<EOF
+with import <nixpkgs> {};
+
+stdenvNoCC.mkDerivation {
+  name = "$SHELL_NAME";
+  buildInputs = [
+  ];
+}
+EOF
+
+echo "✅ shell.nix created with name: $SHELL_NAME"

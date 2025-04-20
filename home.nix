@@ -8,7 +8,7 @@ in {
 
   home = {
     username = "weineng";
-    homeDirectory = "/Users/weineng";
+    homeDirectory = "/home/weineng";
     stateVersion = "20.09";
     packages = with pkgs; [
       (python3.withPackages (p: with p; [
@@ -20,6 +20,7 @@ in {
         pytest
         pylint
         flask
+        rpm
       ]))
 
       nodePackages.mathjax
@@ -27,18 +28,21 @@ in {
       emacsPackages.compat
       emacsPackages.pdf-tools
 
+      linuxPackages.perf
+
       bash
       bazel
       cmake
       llvm
       coreutils
       curl
-      emacs29
+      emacs
       delta
       eza
       glib
       gbenchmark
       fd
+      nodejs_23
       fzf
       flamegraph
       gcc
@@ -83,6 +87,8 @@ in {
       rust-analyzer
       rustc
 
+      gnumake
+
       # fonts
       iosevka
       jetbrains-mono
@@ -90,8 +96,14 @@ in {
       roboto
       roboto-mono
       source-code-pro
+      emacs-all-the-icons-fonts
 
       librsvg
+      libtool
+
+      # perf
+      ocamlPackages.magic-trace
+      hwloc
     ];
   };
 
@@ -150,6 +162,11 @@ in {
       ls = "eza";
       l = "eza -l";
       la = "eza -la";
+      gst = "git status";
+      gaa = "git add .";
+      gcmsg = "git commit -s -m";
+      gp = "git push";
+      gd = "git diff";
 
       # nix-os alias
       rr = ''
@@ -198,6 +215,11 @@ in {
     ];
 
     initExtra = ''
+      . /home/weineng/.nix-profile/etc/profile.d/nix.sh
+      if [ -f "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" ]; then
+        source "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
+      fi
+
       function pwd() {
         printf "%q\n" "$(builtin pwd)"
       }
@@ -233,19 +255,7 @@ in {
          eval "$(/usr/local/bin/brew shellenv)";
       fi
 
-      if [[ ! -d "$HOME/.emacs.d/" ]]; then
-        echo "doom emacs not installed yet"
-        git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.emacs.d
-        git clone https://github.com/wn/doom.d ~/.doom.d
-        ~/.emacs.d/bin/doom install
-      fi
-
-      function flame() {
-          perf record -g --call-graph fp -- g++
-          perf script | stackcollapse-perf.pl > out.perf-folded;
-          flamegraph.pl out.perf-folded > perf.svg;
-          rm out.perf-folded perf.data;
-      }
+      pathadd "$HOME/.config/scripts"
     '';
   };
 
@@ -262,8 +272,13 @@ in {
     extraConfig = "set -g prefix C-t";
   };
 
-  # Scripts
-  # home.file.".config/scripts".source = ./files/scripts;
-  # home.file.".config/scripts".recursive = true;
-  # home.sessionPath = ["$HOME/.config/scripts" "$HOME/dotfiles/.bin"];
+  # Make scripts available at ~/.config/scripts
+  home.file.".config/scripts" = {
+    source = ./scripts;
+    recursive = true;
+  };
+
+  home.sessionPath = [
+    "$HOME/.nix-profile/bin"
+  ];
 }
