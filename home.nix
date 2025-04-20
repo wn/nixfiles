@@ -1,3 +1,4 @@
+# https://home-manager-options.extranix.com/
 { pkgs, config, lib, ... }:
 let
 in {
@@ -15,7 +16,6 @@ in {
         matplotlib
         numpy
         pyflakes
-        pyright
         pygments
         pytest
         pylint
@@ -25,10 +25,12 @@ in {
 
       nodePackages.mathjax
 
-      emacsPackages.compat
-      emacsPackages.pdf-tools
-
+      # perf
+      ocamlPackages.magic-trace
+      hwloc
       linuxPackages.perf
+      flamegraph
+      gbenchmark
 
       bash
       bazel
@@ -40,40 +42,26 @@ in {
       delta
       eza
       glib
-      gbenchmark
-      fd
       nodejs_23
       fzf
-      flamegraph
       gcc
-      qemu
+      gnumake
       nasm
-      git
+      pyright
       clang-tools
       gnupg
       go
-      go-outline
       go-tools
-      gopkgs
-      gopls
       htop
       hugo
       imagemagick
       jq
-      llvm
-      mosh
-      mplayer
       nixfmt
-      nmap
-      pipenv
       ripgrep
       R
-      sqlite
       texlive.combined.scheme-full
       tmux
       wget
-      zsh
-      libGL
 
       # pdfviewer for emacs
       cairo
@@ -87,8 +75,6 @@ in {
       rust-analyzer
       rustc
 
-      gnumake
-
       # fonts
       iosevka
       jetbrains-mono
@@ -101,9 +87,10 @@ in {
       librsvg
       libtool
 
-      # perf
-      ocamlPackages.magic-trace
-      hwloc
+      # zsh
+      zsh-nix-shell
+      zsh-syntax-highlighting
+      pure-prompt
     ];
   };
 
@@ -113,23 +100,18 @@ in {
     userEmail = "weineng.a@gmail.com";
     ignores = [
       "*.DS_Store"
-      "*.DS_Store*"
-      "*.code-workspace"
       "*.log"
       "*.sql"
       "*.sqlite"
-      "*.vscode"
-      ".ccls-cache"
       ".clangd"
       ".gitmodules"
       ".projectile"
       ".testlist"
       ".tspkg"
       "compile_commands.json"
-      "flycheck_*"
+      "flycheck_"
     ];
     aliases = {
-      st = "status";
       root = "rev-parse --show-toplevel";
     };
     extraConfig = {
@@ -160,107 +142,49 @@ in {
 
     shellAliases = {
       ls = "eza";
-      l = "eza -l";
       la = "eza -la";
       gst = "git status";
       gaa = "git add .";
       gcmsg = "git commit -s -m";
       gp = "git push";
       gd = "git diff";
+      gl = "git log";
 
       # nix-os alias
       rr = ''
         nix-shell -p home-manager --run "home-manager -f ~/nixfiles/home.nix switch" && exec zsh'';
       rrc = "nix-env --delete-generations old && nix-store --gc";
 
-      em = "emacsclient -c -n &";
-      e = "emacsclient -c -n";
       doom = "~/.emacs.d/bin/doom";
 
       # Force g++ compiler to show all warnings and use C++20
-      gpp = "g++ -Wall -Weffc++ -std=c++2a -Wextra -Wsign-conversion";
+      gpp = "g++ -Wall -Weffc++ -std=c++2b -Wextra -Wsign-conversion";
     };
 
-    plugins = with pkgs; [
-      {
-        name = "zsh-nix-shell";
-        file = "nix-shell.plugin.zsh";
-        src = pkgs.fetchFromGitHub {
-          owner = "chisui";
-          repo = "zsh-nix-shell";
-          rev = "v0.5.0";
-          sha256 = "0za4aiwwrlawnia4f29msk822rj9bgcygw6a8a6iikiwzjjz0g91";
-        };
-      }
-      {
-        name = "zsh-syntax-highlighting";
-        src = fetchFromGitHub {
-          owner = "zsh-users";
-          repo = "zsh-syntax-highlighting";
-          rev = "0.6.0";
-          sha256 = "0zmq66dzasmr5pwribyh4kbkk23jxbpdw4rjxx0i7dx8jjp2lzl4";
-        };
-        file = "zsh-syntax-highlighting.zsh";
-      }
-      {
-        name = "pure";
-        src = fetchFromGitHub {
-          owner = "sindresorhus";
-          repo = "pure";
-          rev = "1.20.1";
-          sha256 = "1bxg5i3a0dm5ifj67ari684p89bcr1kjjh6d5gm46yxyiz9f5qla";
-        };
-        file = "pure.zsh";
-      }
-    ];
-
     initExtra = ''
-      . /home/weineng/.nix-profile/etc/profile.d/nix.sh
+      source /home/weineng/.nix-profile/etc/profile.d/nix.sh
       if [ -f "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" ]; then
         source "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
       fi
-
-      function pwd() {
-        printf "%q\n" "$(builtin pwd)"
-      }
 
       # Override default 'cd' to show files (ls)
       function cd() {
         builtin cd $@ && ls
       }
 
-      # check that PATH don't contain dir before prepending.
-      function pathadd() {
-        if [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]]; then
-          PATH="''${PATH:+"$PATH:"}$1"
-        fi
-      }
-
       export TERM=xterm-256color
-      export TERMCAP=
 
       # set up pure
-      autoload -U promptinit
-      promptinit
+      export PURE_PROMPT_DIR="${pkgs.pure-prompt}/share/zsh/site-functions"
+      fpath+=($PURE_PROMPT_DIR)
+      autoload -U promptinit; promptinit
       prompt pure
       zstyle :prompt:pure:git:stash show yes
 
       autoload -Uz compinit && compinit
       zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
       setopt MENU_COMPLETE
-
-      if [[ $OSTYPE == 'darwin'* ]]; then
-         source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-         export NIX_PATH=$HOME/.nix-defexpr/channels:$NIX_PATH
-         eval "$(/usr/local/bin/brew shellenv)";
-      fi
-
-      pathadd "$HOME/.config/scripts"
     '';
-  };
-
-  programs.home-manager = {
-    enable = false;
   };
 
   programs.fzf = {
@@ -273,12 +197,12 @@ in {
   };
 
   # Make scripts available at ~/.config/scripts
+  home.sessionPath = [
+    "${config.home.homeDirectory}/.config/scripts"
+  ];
+
   home.file.".config/scripts" = {
     source = ./scripts;
     recursive = true;
   };
-
-  home.sessionPath = [
-    "$HOME/.nix-profile/bin"
-  ];
 }
