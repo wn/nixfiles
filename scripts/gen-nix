@@ -25,6 +25,11 @@ stdenvNoCC.mkDerivation {
   name = "$SHELL_NAME";
   buildInputs = [
   ];
+
+  shellHook = ''
+    export SHELL=$(which zsh)
+    exec zsh
+  '';
 }
 EOF
 

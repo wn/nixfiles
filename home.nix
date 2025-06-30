@@ -32,23 +32,20 @@ in {
       flamegraph
       gbenchmark
 
+      R
       bash
       bazel
+      clang-tools
       cmake
-      llvm
       coreutils
       curl
-      emacs
       delta
+      emacs
       eza
-      glib
-      nodejs_23
       fzf
       gcc
+      glib
       gnumake
-      nasm
-      pyright
-      clang-tools
       gnupg
       go
       go-tools
@@ -56,9 +53,13 @@ in {
       hugo
       imagemagick
       jq
+      llvm
+      nasm
       nixfmt
+      ocaml
+      openjdk
+      pyright
       ripgrep
-      R
       texlive.combined.scheme-full
       tmux
       wget
@@ -66,7 +67,13 @@ in {
       # pdfviewer for emacs
       cairo
       libpng
+      librsvg
+      libtool
+      emacsPackages.pdf-tools
+      emacsPackages.cask
       poppler
+      glib
+      pkg-config
 
       # rust
       cargo
@@ -83,33 +90,40 @@ in {
       roboto-mono
       source-code-pro
       emacs-all-the-icons-fonts
-
-      librsvg
-      libtool
-
-      # zsh
-      zsh-nix-shell
-      zsh-syntax-highlighting
-      pure-prompt
+      ocamlPackages.ocaml-lsp
+      ocamlPackages.odoc
+      ocamlPackages.ocamlformat
+      ocamlPackages.utop
     ];
   };
-
   programs.git = {
     enable = true;
     userName = "Ang Wei Neng";
     userEmail = "weineng.a@gmail.com";
     ignores = [
       "*.DS_Store"
+      "*.DS_Store*"
+      "*.code-workspace"
       "*.log"
       "*.sql"
       "*.sqlite"
-      ".clangd"
+      "*.vscode"
+      ".ccls-cache"
       ".gitmodules"
       ".projectile"
+      ".test-all.v1.sqlite3"
       ".testlist"
       ".tspkg"
       "compile_commands.json"
-      "flycheck_"
+      "compile_commands.zsh"
+      "flycheck_*"
+      "CMakeFiles"
+      "CMakeCache.txt"
+      "build.ninja"
+      ".builderrors"
+      ".base_universe"
+      "cmake_install.cmake"
+      ".cache"
     ];
     aliases = {
       root = "rev-parse --show-toplevel";
@@ -149,6 +163,7 @@ in {
       gp = "git push";
       gd = "git diff";
       gl = "git log";
+      grhh = "git reset --hard";
 
       # nix-os alias
       rr = ''
@@ -161,8 +176,44 @@ in {
       gpp = "g++ -Wall -Weffc++ -std=c++2b -Wextra -Wsign-conversion";
     };
 
+    plugins = with pkgs; [
+       {
+         name = "zsh-nix-shell";
+         file = "nix-shell.plugin.zsh";
+         src = pkgs.fetchFromGitHub {
+           owner = "chisui";
+           repo = "zsh-nix-shell";
+           rev = "v0.5.0";
+           sha256 = "0za4aiwwrlawnia4f29msk822rj9bgcygw6a8a6iikiwzjjz0g91";
+         };
+       }
+       {
+         name = "zsh-syntax-highlighting";
+         src = fetchFromGitHub {
+           owner = "zsh-users";
+           repo = "zsh-syntax-highlighting";
+           rev = "0.6.0";
+           sha256 = "0zmq66dzasmr5pwribyh4kbkk23jxbpdw4rjxx0i7dx8jjp2lzl4";
+         };
+         file = "zsh-syntax-highlighting.zsh";
+       }
+       {
+         name = "pure";
+         src = fetchFromGitHub {
+           owner = "sindresorhus";
+           repo = "pure";
+           rev = "1.20.1";
+           sha256 = "1bxg5i3a0dm5ifj67ari684p89bcr1kjjh6d5gm46yxyiz9f5qla";
+         };
+         file = "pure.zsh";
+       }
+     ];
+
     initExtra = ''
-      source /home/weineng/.nix-profile/etc/profile.d/nix.sh
+      if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
+        . "$HOME/.nix-profile/etc/profile.d/nix.sh"
+      fi
+
       if [ -f "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" ]; then
         source "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
       fi
@@ -191,18 +242,51 @@ in {
     enable = true;
   };
 
-  programs.tmux = {
+    programs.tmux = {
     enable = true;
-    extraConfig = "set -g prefix C-t";
+    extraConfig = ''
+set -g prefix C-t
+set -g default-terminal "tmux-256color"
+set -ga terminal-overrides ",*256col*:Tc"
+set -ga terminal-overrides '*:Ss=\E[%p1%d q:Se=\E[ q'
+set -g base-index 1
+setw -g pane-base-index 1
+set-option -g renumber-windows on
+set-environment -g COLORTERM "truecolor"
+'';
   };
 
   # Make scripts available at ~/.config/scripts
   home.sessionPath = [
     "${config.home.homeDirectory}/.config/scripts"
+    "/usr/class/cs143/cool/bin"
   ];
 
   home.file.".config/scripts" = {
     source = ./scripts;
     recursive = true;
   };
+
+  home.file.".config/files/" = {
+    source = ./files;
+    recursive = true;
+  };
+
+  systemd.user.services.kmonad = {
+    Unit = {
+      Description = "KMonad Keyboard Daemon";
+      After = [ "graphical-session.target" ];
+    };
+
+    Service = {
+      ExecStart = "${pkgs.kmonad}/bin/kmonad ${config.home.homeDirectory}/.config/files/kmonad.kbd";
+      Restart = "always";
+      RestartSec = 3;
+    };
+
+    Install = {
+      WantedBy = [ "default.target" ];
+    };
+  };
+
 }
