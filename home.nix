@@ -157,6 +157,7 @@ in {
       diff = {
         submodule = "diff";
       };
+      commit.gpgSign = true;
       signing.signByDefault = true;
       gpg = {
         program = "${pkgs.gnupg}/bin/gpg";
