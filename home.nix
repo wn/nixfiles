@@ -97,6 +97,11 @@ in {
       ocamlPackages.ocamlformat
       ocamlPackages.utop
     ];
+
+    sessionVariables = {
+      SHELL = "${pkgs.zsh}/bin/zsh";
+      NIX_BUILD_SHELL = "${pkgs.zsh}/bin/zsh";
+    };
   };
 
   services.gpg-agent = {
@@ -118,21 +123,16 @@ in {
     userName = "Ang Wei Neng";
     userEmail = "weineng.a@gmail.com";
     ignores = [
-      "*.DS_Store"
-      "*.DS_Store*"
+      ".DS_Store"
       "*.code-workspace"
       "*.log"
       "*.sql"
       "*.sqlite"
       "*.vscode"
-      ".ccls-cache"
       ".gitmodules"
       ".projectile"
       ".test-all.v1.sqlite3"
-      ".testlist"
-      ".tspkg"
       "compile_commands.json"
-      "compile_commands.zsh"
       "flycheck_*"
       "CMakeFiles"
       "CMakeCache.txt"
@@ -157,8 +157,10 @@ in {
       diff = {
         submodule = "diff";
       };
+      signing.signByDefault = true;
       gpg = {
-        program = "gpg";
+        program = "${pkgs.gnupg}/bin/gpg";
+        pinentry-mode = "loopback";
       };
     };
   };
@@ -273,7 +275,6 @@ set-environment -g COLORTERM "truecolor"
 
   home.sessionPath = [
     "${config.home.homeDirectory}/.config/scripts"
-    "/usr/class/cs143/cool/bin"
   ];
 
   # Make scripts available at ~/.config/scripts
@@ -295,23 +296,6 @@ set-environment -g COLORTERM "truecolor"
 
     Service = {
       ExecStart = "${pkgs.kmonad}/bin/kmonad ${config.home.homeDirectory}/.config/files/kmonad.kbd";
-      Restart = "always";
-      RestartSec = 3;
-    };
-
-    Install = {
-      WantedBy = [ "default.target" ];
-    };
-  };
-
-  systemd.user.services.xremap = {
-    Unit = {
-      Description = "XRemap Keyboard Daemon";
-      After = [ "graphical-session.target" ];
-    };
-
-    Service = {
-      ExecStart = "${pkgs.xremap}/bin/kmonad ${config.home.homeDirectory}/.config/files/config.yml";
       Restart = "always";
       RestartSec = 3;
     };
