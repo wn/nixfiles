@@ -12,6 +12,20 @@ export NIX_PATH=~/.nix-defexpr/channels
 nix-shell -p home-manager --run "home-manager -f ~/nixfiles/home.nix switch" && exec zsh
 ```
 
+#### bashrc
+``` bash
+. /home/weineng/.nix-profile/etc/profile.d/nix.sh
+export NIX_PATH=~/.nix-defexpr/channels
+zsh
+
+```
+
+#### fedora
+``` bash
+localectl set-keymap dvorak
+sudo dnf install jetbrains-mono-fonts-all iosevka roboto
+```
+gnome tweaks -> keyboard -> emacs binding
 ### MacOS
 
 ```bash

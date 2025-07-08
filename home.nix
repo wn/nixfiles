@@ -4,9 +4,6 @@ let
 in {
   imports = [ ];
 
-  nixpkgs.config.allowUnfree = true;
-  fonts.fontconfig.enable = true;
-
   home = {
     username = "weineng";
     homeDirectory = "/home/weineng";
@@ -24,6 +21,10 @@ in {
       ]))
 
       nodePackages.mathjax
+
+      jetbrains-mono
+
+      kmonad
 
       # perf
       ocamlPackages.magic-trace
@@ -59,6 +60,7 @@ in {
       ocaml
       openjdk
       pyright
+      pinentry-all
       ripgrep
       texlive.combined.scheme-full
       tmux
@@ -96,6 +98,21 @@ in {
       ocamlPackages.utop
     ];
   };
+
+  services.gpg-agent = {
+      enable=true;
+      defaultCacheTtl = 60; #1min
+      extraConfig = ''
+        pinentry-program ${pkgs.pinentry-all}/bin/pinentry-curses
+        allow-loopback-pinentry
+      '';
+  };
+
+  nixpkgs.config.allowUnfree = true;
+  fonts.fontconfig.enable = true;
+  programs.gpg.enable = true;
+  programs.fzf.enable = true;
+
   programs.git = {
     enable = true;
     userName = "Ang Wei Neng";
@@ -210,6 +227,8 @@ in {
      ];
 
     initExtra = ''
+      export GPG_TTY=$(tty)
+
       if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
         . "$HOME/.nix-profile/etc/profile.d/nix.sh"
       fi
@@ -238,11 +257,7 @@ in {
     '';
   };
 
-  programs.fzf = {
-    enable = true;
-  };
-
-    programs.tmux = {
+  programs.tmux = {
     enable = true;
     extraConfig = ''
 set -g prefix C-t
@@ -256,12 +271,12 @@ set-environment -g COLORTERM "truecolor"
 '';
   };
 
-  # Make scripts available at ~/.config/scripts
   home.sessionPath = [
     "${config.home.homeDirectory}/.config/scripts"
     "/usr/class/cs143/cool/bin"
   ];
 
+  # Make scripts available at ~/.config/scripts
   home.file.".config/scripts" = {
     source = ./scripts;
     recursive = true;
@@ -289,4 +304,20 @@ set-environment -g COLORTERM "truecolor"
     };
   };
 
+  systemd.user.services.xremap = {
+    Unit = {
+      Description = "XRemap Keyboard Daemon";
+      After = [ "graphical-session.target" ];
+    };
+
+    Service = {
+      ExecStart = "${pkgs.xremap}/bin/kmonad ${config.home.homeDirectory}/.config/files/config.yml";
+      Restart = "always";
+      RestartSec = 3;
+    };
+
+    Install = {
+      WantedBy = [ "default.target" ];
+    };
+  };
 }
