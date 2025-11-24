@@ -20,6 +20,14 @@ in {
         rpm
       ]))
 
+      ### fedora packages
+      # ulauncher # add super-space to ulaucher-toggle in custom shortcuts
+      wmctrl
+      gpaste
+      spotify
+
+      codex
+
       nodePackages.mathjax
 
       jetbrains-mono
@@ -29,10 +37,12 @@ in {
       # perf
       ocamlPackages.magic-trace
       hwloc
-      linuxPackages.perf
+      perf
       flamegraph
       gbenchmark
+      cpuid
 
+      fd
       R
       bash
       bazel
@@ -83,6 +93,7 @@ in {
       clippy
       rust-analyzer
       rustc
+      rustfmt
 
       # fonts
       iosevka
@@ -120,8 +131,32 @@ in {
 
   programs.git = {
     enable = true;
-    userName = "Ang Wei Neng";
-    userEmail = "weineng.a@gmail.com";
+    settings = {
+      user = {
+        name = "Ang Wei Neng";
+        email = "weineng.a@gmail.com";
+      };
+      alias = {
+        root = "rev-parse --show-toplevel";
+      };
+      core = {
+        autocrlf = false;
+        editor = "emacs -nw -Q -f menu-bar-mode";
+      };
+      pull.rebase = true;
+      http.emptyauth = true;
+      init.defaultBranch = "main";
+      status = { submodulesummary = true; };
+      diff = {
+        submodule = "diff";
+      };
+      commit.gpgSign = true;
+      signing.signByDefault = true;
+      gpg = {
+        program = "${pkgs.gnupg}/bin/gpg";
+        pinentry-mode = "loopback";
+      };
+    };
     ignores = [
       ".DS_Store"
       "*.code-workspace"
@@ -142,34 +177,12 @@ in {
       "cmake_install.cmake"
       ".cache"
     ];
-    aliases = {
-      root = "rev-parse --show-toplevel";
-    };
-    extraConfig = {
-      core = {
-        autocrlf = false;
-        editor = "emacs -nw -Q -f menu-bar-mode";
-      };
-      pull.rebase = true;
-      http.emptyauth = true;
-      init.defaultBranch = "main";
-      status = { submodulesummary = true; };
-      diff = {
-        submodule = "diff";
-      };
-      commit.gpgSign = true;
-      signing.signByDefault = true;
-      gpg = {
-        program = "${pkgs.gnupg}/bin/gpg";
-        pinentry-mode = "loopback";
-      };
-    };
   };
 
   programs.zsh = {
     enable = true;
     autocd = true;
-    dotDir = ".config/zsh";
+    dotDir = "${config.xdg.configHome}/zsh";
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
     enableCompletion = true;
@@ -229,7 +242,7 @@ in {
        }
      ];
 
-    initExtra = ''
+    initContent = ''
       export GPG_TTY=$(tty)
 
       if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then

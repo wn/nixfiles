@@ -19,13 +19,14 @@ export NIX_PATH=~/.nix-defexpr/channels
 zsh
 
 ```
-
 #### fedora
 ``` bash
 localectl set-keymap dvorak
 sudo dnf install jetbrains-mono-fonts-all iosevka roboto
 ```
 gnome tweaks -> keyboard -> emacs binding
+
+Set up [ssh](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account) and [gpg](https://docs.github.com/en/authentication/managing-commit-signature-verification/generating-a-new-gpg-key) keys for github
 ### MacOS
 
 ```bash
