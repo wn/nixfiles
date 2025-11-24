@@ -118,8 +118,8 @@ in {
   services.gpg-agent = {
       enable=true;
       defaultCacheTtl = 60; #1min
+      pinentry.package = pkgs.pinentry-gnome3;
       extraConfig = ''
-        pinentry-program ${pkgs.pinentry-all}/bin/pinentry-curses
         allow-loopback-pinentry
       '';
   };
@@ -154,7 +154,8 @@ in {
       signing.signByDefault = true;
       gpg = {
         program = "${pkgs.gnupg}/bin/gpg";
-        pinentry-mode = "loopback";
+        pinentry-mode = "gnome3";
+        use-agent = true;
       };
     };
     ignores = [
