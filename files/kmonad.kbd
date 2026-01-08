@@ -13,7 +13,7 @@
     tab   q    w    e    r    t    y    u    i    o    p    [    ]    \
     caps  a    s    d    f    g    h    j    k    l    ;    '    ret
     lsft  z    x    c    v    b    n    m    ,    .    /    rsft
-  lctl  fn lmet lalt           spc            ralt    pgup  up  pgdn
+  lctl  fn lmet lalt           spc            ralt f23   pgup  up  pgdn
                                                       left down right
 )
 
@@ -26,6 +26,6 @@
 @alt-tab   q    w    e    r    t    y    u    i    o    p    [    ]    \
 @ctl-esc  a    s    d    f    g    h    j    k    l    ;    '    ret
     lsft  z    x    c    v    b    n    m    ,    .    /    rsft
-  lctl  fn lmet lalt           spc            ralt    pgup  up  pgdn
+  lctl  fn lmet lalt           spc            ralt  f13  pgup  up  pgdn
                                                       left down right
 )

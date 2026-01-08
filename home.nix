@@ -18,6 +18,9 @@ in {
         pylint
         flask
         rpm
+        requests
+        ruff
+        pip
       ]))
 
       ### fedora packages
@@ -25,6 +28,7 @@ in {
       wmctrl
       gpaste
       spotify
+      sqlite
 
       codex
 
@@ -54,8 +58,9 @@ in {
       emacs
       eza
       fzf
-      gcc
       glib
+      # gcc # probably should use nix-shell if gcc is necessary
+      clang # plays better with clangd and header discovery
       gnumake
       gnupg
       go
@@ -70,6 +75,7 @@ in {
       ocaml
       openjdk
       pyright
+      bear
       pinentry-all
       ripgrep
       texlive.combined.scheme-full
@@ -84,7 +90,6 @@ in {
       emacsPackages.pdf-tools
       emacsPackages.cask
       poppler
-      glib
       pkg-config
 
       # rust
@@ -103,6 +108,7 @@ in {
       roboto-mono
       source-code-pro
       emacs-all-the-icons-fonts
+
       ocamlPackages.ocaml-lsp
       ocamlPackages.odoc
       ocamlPackages.ocamlformat
@@ -117,10 +123,11 @@ in {
 
   services.gpg-agent = {
       enable=true;
-      defaultCacheTtl = 60; #1min
+      defaultCacheTtl = 1; #1 second
       pinentry.package = pkgs.pinentry-gnome3;
       extraConfig = ''
         allow-loopback-pinentry
+        ignore-cache-for-signing
       '';
   };
 
@@ -318,5 +325,14 @@ set-environment -g COLORTERM "truecolor"
     Install = {
       WantedBy = [ "default.target" ];
     };
+  };
+
+  xdg.desktopEntries.emacs = {
+    name = "Emacs";
+    comment = "Emacs Editor";
+    exec = "emacs";
+    icon = "emacs";
+    terminal = false;
+    categories = [ "Development" "TextEditor" ];
   };
 }
