@@ -122,8 +122,8 @@ in {
   };
 
   services.gpg-agent = {
-      enable=true;
-      defaultCacheTtl = 1; #1 second
+      enable = true;
+      defaultCacheTtl = 1; # 1 second
       pinentry.package = pkgs.pinentry-gnome3;
       extraConfig = ''
         allow-loopback-pinentry
@@ -335,4 +335,11 @@ set-environment -g COLORTERM "truecolor"
     terminal = false;
     categories = [ "Development" "TextEditor" ];
   };
+
+  xdg.configFile."clangd/config.yaml".text = ''
+      If:
+        PathMatch: '.*\.(cc|cpp|cxx|hh|hpp|hxx)$'
+      CompileFlags:
+        Add: [-std=c++2b]
+    '';
 }

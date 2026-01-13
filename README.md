@@ -23,6 +23,7 @@ zsh
 ``` bash
 localectl set-keymap dvorak
 sudo dnf install jetbrains-mono-fonts-all iosevka roboto
+sudo dnf debuginfo-install kernel # for perf
 ```
 gnome tweaks -> keyboard -> emacs binding
 
