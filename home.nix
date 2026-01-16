@@ -10,18 +10,21 @@ in {
     stateVersion = "20.09";
     packages = with pkgs; [
       (python3.withPackages (p: with p; [
+        flask
         matplotlib
         numpy
+        pip
         pyflakes
         pygments
-        pytest
         pylint
-        flask
-        rpm
+        pytest
         requests
+        rpm
         ruff
-        pip
       ]))
+
+      # keyboard macro helper
+      kmonad
 
       ### fedora packages
       # ulauncher # add super-space to ulaucher-toggle in custom shortcuts
@@ -30,41 +33,36 @@ in {
       spotify
       sqlite
 
-      codex
-
-      gdbgui
-
       nodePackages.mathjax
 
-      jetbrains-mono
-
-      kmonad
-
       # perf
-      ocamlPackages.magic-trace
-      hwloc
-      perf
+      cpuid
       flamegraph
       gbenchmark
-      cpuid
+      hwloc
+      perf
+      ocamlPackages.magic-trace
 
-      fd
+      # nice to have in terminals
       R
       bash
       bazel
+      bear
+      clang # plays better with clangd and header discovery
       clang-tools
       cmake
+      codex
       coreutils
       curl
       delta
       emacs
       eza
-      fzf
-      glib
+      fd
       # gcc # probably should use nix-shell if gcc is necessary
-      clang # plays better with clangd and header discovery
+      gdb
+      gdbgui
+      glib
       gnumake
-      gnupg
       go
       go-tools
       htop
@@ -74,25 +72,22 @@ in {
       llvm
       nasm
       nixfmt
-      ocaml
       openjdk
-      pyright
-      bear
       pinentry-all
+      pyright
       ripgrep
       texlive.combined.scheme-full
-      tmux
       wget
 
       # pdfviewer for emacs
       cairo
+      emacsPackages.cask
+      emacsPackages.pdf-tools
       libpng
       librsvg
       libtool
-      emacsPackages.pdf-tools
-      emacsPackages.cask
-      poppler
       pkg-config
+      poppler
 
       # rust
       cargo
@@ -110,11 +105,6 @@ in {
       roboto-mono
       source-code-pro
       emacs-all-the-icons-fonts
-
-      ocamlPackages.ocaml-lsp
-      ocamlPackages.odoc
-      ocamlPackages.ocamlformat
-      ocamlPackages.utop
     ];
 
     sessionVariables = {
@@ -200,13 +190,14 @@ in {
     shellAliases = {
       ls = "eza";
       la = "eza -la";
-      gst = "git status";
+
       gaa = "git add .";
       gcmsg = "git commit -s -m";
-      gp = "git push";
       gd = "git diff";
       gl = "git log";
+      gp = "git push";
       grhh = "git reset --hard";
+      gst = "git status";
 
       # nix-os alias
       rr = ''
@@ -229,26 +220,6 @@ in {
            rev = "v0.5.0";
            sha256 = "0za4aiwwrlawnia4f29msk822rj9bgcygw6a8a6iikiwzjjz0g91";
          };
-       }
-       {
-         name = "zsh-syntax-highlighting";
-         src = fetchFromGitHub {
-           owner = "zsh-users";
-           repo = "zsh-syntax-highlighting";
-           rev = "0.6.0";
-           sha256 = "0zmq66dzasmr5pwribyh4kbkk23jxbpdw4rjxx0i7dx8jjp2lzl4";
-         };
-         file = "zsh-syntax-highlighting.zsh";
-       }
-       {
-         name = "pure";
-         src = fetchFromGitHub {
-           owner = "sindresorhus";
-           repo = "pure";
-           rev = "1.20.1";
-           sha256 = "1bxg5i3a0dm5ifj67ari684p89bcr1kjjh6d5gm46yxyiz9f5qla";
-         };
-         file = "pure.zsh";
        }
      ];
 
@@ -277,7 +248,7 @@ in {
       prompt pure
       zstyle :prompt:pure:git:stash show yes
 
-      autoload -Uz compinit && compinit
+      # autoload -Uz compinit && compinit
       zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
       setopt MENU_COMPLETE
     '';
