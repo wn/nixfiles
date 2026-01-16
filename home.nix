@@ -32,6 +32,8 @@ in {
 
       codex
 
+      gdbgui
+
       nodePackages.mathjax
 
       jetbrains-mono
@@ -208,13 +210,13 @@ in {
 
       # nix-os alias
       rr = ''
-        nix-shell -p home-manager --run "home-manager -f ~/nixfiles/home.nix switch" && exec zsh'';
+        nix-shell -p home-manager --run "home-manager -f ~/nixfiles/home.nix switch"'';
       rrc = "nix-env --delete-generations old && nix-store --gc";
 
       doom = "~/.emacs.d/bin/doom";
 
-      # Force g++ compiler to show all warnings and use C++20
-      gpp = "g++ -Wall -Weffc++ -std=c++2b -Wextra -Wsign-conversion";
+      # Force c++ compiler to show all warnings and use C++20
+      gpp = "c++ -Wall -Weffc++ -std=c++2b -Wextra -Wsign-conversion";
     };
 
     plugins = with pkgs; [
@@ -296,19 +298,8 @@ set-environment -g COLORTERM "truecolor"
   };
 
   home.sessionPath = [
-    "${config.home.homeDirectory}/.config/scripts"
+    "${config.xdg.configHome}/scripts"
   ];
-
-  # Make scripts available at ~/.config/scripts
-  home.file.".config/scripts" = {
-    source = ./scripts;
-    recursive = true;
-  };
-
-  home.file.".config/files/" = {
-    source = ./files;
-    recursive = true;
-  };
 
   systemd.user.services.kmonad = {
     Unit = {
@@ -337,9 +328,36 @@ set-environment -g COLORTERM "truecolor"
   };
 
   xdg.configFile."clangd/config.yaml".text = ''
-      If:
-        PathMatch: '.*\.(cc|cpp|cxx|hh|hpp|hxx)$'
-      CompileFlags:
-        Add: [-std=c++2b]
-    '';
+    CompileFlags:
+      Compiler:"${pkgs.clang}/bin/clang++"
+      Add: [-std=c++23]
+  '';
+
+  xdg.configFile."gdb/gdbinit".text = ''
+    # ---- Debuginfod: make it permanent (no interactive prompt) ----
+    set debuginfod enabled on
+
+    # Optional: keep Fedora’s server (you can add more URLs if you use others)
+    set debuginfod urls https://debuginfod.fedoraproject.org/
+
+    # ---- Safe auto-loading (pretty-printers, helpers) ----
+    # Allow auto-loaded scripts from Nix store without opening the entire filesystem.
+    add-auto-load-safe-path /nix/store
+    set auto-load safe-path /nix/store:$debugdir:$datadir/auto-load
+
+    # (Optional) If you still see thread debugging warnings, Nix GDB usually helps.
+    # You can also guide GDB to libthread_db from Nix glibc:
+    set libthread-db-search-path ${pkgs.glibc}/lib
+  '';
+
+  # Make scripts available at ~/.config/scripts
+  xdg.configFile."scripts" = {
+    source = ./scripts;
+    recursive = true;
+  };
+
+  xdg.configFile."files/" = {
+    source = ./files;
+    recursive = true;
+  };
 }
