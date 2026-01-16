@@ -78,6 +78,9 @@ in {
       ripgrep
       texlive.combined.scheme-full
       wget
+      pure-prompt
+      zsh
+      zsh-nix-shell
 
       # pdfviewer for emacs
       cairo
@@ -109,7 +112,7 @@ in {
 
     sessionVariables = {
       SHELL = "${pkgs.zsh}/bin/zsh";
-      NIX_BUILD_SHELL = "${pkgs.zsh}/bin/zsh";
+      # NIX_BUILD_SHELL = "${pkgs.zsh}/bin/zsh";
     };
   };
 
@@ -158,24 +161,23 @@ in {
       };
     };
     ignores = [
-      ".DS_Store"
+      ".cache/"
+      ".vscode/"
+      "CMakeFiles/"
       "*.code-workspace"
       "*.log"
       "*.sql"
       "*.sqlite"
-      "*.vscode"
+      ".DS_Store"
+      ".base_universe"
+      ".builderrors"
       ".gitmodules"
       ".projectile"
-      ".test-all.v1.sqlite3"
-      "compile_commands.json"
-      "flycheck_*"
-      "CMakeFiles"
       "CMakeCache.txt"
       "build.ninja"
-      ".builderrors"
-      ".base_universe"
       "cmake_install.cmake"
-      ".cache"
+      "compile_commands.json"
+      "flycheck_*"
     ];
   };
 
@@ -210,62 +212,17 @@ in {
       gpp = "c++ -Wall -Weffc++ -std=c++2b -Wextra -Wsign-conversion";
     };
 
-    plugins = with pkgs; [
-       {
-         name = "zsh-nix-shell";
-         file = "nix-shell.plugin.zsh";
-         src = pkgs.fetchFromGitHub {
-           owner = "chisui";
-           repo = "zsh-nix-shell";
-           rev = "v0.5.0";
-           sha256 = "0za4aiwwrlawnia4f29msk822rj9bgcygw6a8a6iikiwzjjz0g91";
-         };
-       }
-     ];
+    plugins = with pkgs; [ ];
 
     initContent = ''
-      export GPG_TTY=$(tty)
-
-      if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
-        . "$HOME/.nix-profile/etc/profile.d/nix.sh"
-      fi
-
-      if [ -f "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" ]; then
-        source "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
-      fi
-
-      # Override default 'cd' to show files (ls)
-      function cd() {
-        builtin cd $@ && ls
-      }
-
-      export TERM=xterm-256color
-
-      # set up pure
-      export PURE_PROMPT_DIR="${pkgs.pure-prompt}/share/zsh/site-functions"
-      fpath+=($PURE_PROMPT_DIR)
       autoload -U promptinit; promptinit
       prompt pure
-      zstyle :prompt:pure:git:stash show yes
-
-      # autoload -Uz compinit && compinit
-      zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
-      setopt MENU_COMPLETE
     '';
   };
 
   programs.tmux = {
     enable = true;
-    extraConfig = ''
-set -g prefix C-t
-set -g default-terminal "tmux-256color"
-set -ga terminal-overrides ",*256col*:Tc"
-set -ga terminal-overrides '*:Ss=\E[%p1%d q:Se=\E[ q'
-set -g base-index 1
-setw -g pane-base-index 1
-set-option -g renumber-windows on
-set-environment -g COLORTERM "truecolor"
-'';
+    extraConfig = (builtins.readFile ./config/tmux/tmux.conf.extra);
   };
 
   home.sessionPath = [
@@ -279,7 +236,7 @@ set-environment -g COLORTERM "truecolor"
     };
 
     Service = {
-      ExecStart = "${pkgs.kmonad}/bin/kmonad ${config.home.homeDirectory}/.config/files/kmonad.kbd";
+      ExecStart = "${pkgs.kmonad}/bin/kmonad ${config.xdg.configHome}/files/kmonad.kbd";
       Restart = "always";
       RestartSec = 3;
     };
@@ -298,28 +255,17 @@ set-environment -g COLORTERM "truecolor"
     categories = [ "Development" "TextEditor" ];
   };
 
-  xdg.configFile."clangd/config.yaml".text = ''
-    CompileFlags:
-      Compiler:"${pkgs.clang}/bin/clang++"
-      Add: [-std=c++23]
-  '';
+  xdg.configFile."clangd/config.yaml".text =
+    builtins.replaceStrings
+      [ "@CLANGXX@" ]
+      [ "${pkgs.clang}/bin/clang++" ]
+      (builtins.readFile ./config/clangd/config.yaml.in);
 
-  xdg.configFile."gdb/gdbinit".text = ''
-    # ---- Debuginfod: make it permanent (no interactive prompt) ----
-    set debuginfod enabled on
-
-    # Optional: keep Fedora’s server (you can add more URLs if you use others)
-    set debuginfod urls https://debuginfod.fedoraproject.org/
-
-    # ---- Safe auto-loading (pretty-printers, helpers) ----
-    # Allow auto-loaded scripts from Nix store without opening the entire filesystem.
-    add-auto-load-safe-path /nix/store
-    set auto-load safe-path /nix/store:$debugdir:$datadir/auto-load
-
-    # (Optional) If you still see thread debugging warnings, Nix GDB usually helps.
-    # You can also guide GDB to libthread_db from Nix glibc:
-    set libthread-db-search-path ${pkgs.glibc}/lib
-  '';
+  xdg.configFile."gdb/gdbinit".text =
+    builtins.replaceStrings
+      [ "@GLIBCLIB@" ]
+      [ "${pkgs.glibc}/lib" ]
+      (builtins.readFile ./config/gdb/gdbinit.in);
 
   # Make scripts available at ~/.config/scripts
   xdg.configFile."scripts" = {

@@ -1,0 +1,11 @@
+# ---- Debuginfod: make it permanent (no interactive prompt) ----
+set debuginfod enabled on
+   # Optional: keep Fedora’s server (you can add more URLs if you use others)
+set debuginfod urls https://debuginfod.fedoraproject.org/
+   # ---- Safe auto-loading (pretty-printers, helpers) ----
+# Allow auto-loaded scripts from Nix store without opening the entire filesystem.
+add-auto-load-safe-path /nix/store
+set auto-load safe-path /nix/store:$debugdir:$datadir/auto-load
+   # (Optional) If you still see thread debugging warnings, Nix GDB usually helps.
+# You can also guide GDB to libthread_db from Nix glibc:
+set libthread-db-search-path ${pkgs.glibc}/lib

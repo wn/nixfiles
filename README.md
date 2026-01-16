@@ -28,8 +28,8 @@ sudo dnf debuginfo-install kernel # for perf
 gnome tweaks -> keyboard -> emacs binding
 
 Set up [ssh](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account) and [gpg](https://docs.github.com/en/authentication/managing-commit-signature-verification/generating-a-new-gpg-key) keys for github
-### MacOS
 
+### MacOS
 ```bash
 # From https://gist.github.com/mandrean/65108e0898629e20afe1002d8bf4f223
 sh <(curl -L https://nixos.org/nix/install) --darwin-use-unencrypted-nix-store-volume --daemon

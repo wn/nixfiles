@@ -1,0 +1,36 @@
+CompileFlags:
+  Compiler: ${pkgs.clang}/bin/clang++
+  Add:
+    - -std=c++23
+    - -ferror-limit=0        # show all errors
+    - -fdiagnostics-color=always
+Diagnostics:
+  UnusedIncludes: Strict     # aggressively catch include bloat
+  MissingIncludes: Strict
+  ClangTidy:
+    Add:
+      - modernize-*
+      - performance-*
+      - bugprone-*
+    Remove:
+      - modernize-use-trailing-return-type
+      - modernize-use-auto
+      - modernize-avoid-c-arrays
+Index:
+  Background: Build         # build from compile_commands.json
+  StandardLibrary: Yes
+
+Completion:
+  AllScopes: Yes             # autocomplete symbols outside current scope
+  FilterAndSort: Yes
+
+Hover:
+  ShowAKA: Yes               # show typedef / using expansions
+
+InlayHints:
+  Enabled: Yes
+  ParameterNames: Yes
+  DeducedTypes: Yes
+
+Style:
+  FullyQualifiedNamespaces: No
