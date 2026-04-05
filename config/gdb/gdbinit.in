@@ -1,4 +1,7 @@
 # ---- Debuginfod: make it permanent (no interactive prompt) ----
+set pagination off
+set print pretty on
+set print demangle on
 set debuginfod enabled on
    # Optional: keep Fedora’s server (you can add more URLs if you use others)
 set debuginfod urls https://debuginfod.fedoraproject.org/

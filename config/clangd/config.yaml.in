@@ -1,5 +1,5 @@
 CompileFlags:
-  Compiler: ${pkgs.clang}/bin/clang++
+  Compiler: @C++COMPILER@
   Add:
     - -std=c++23
     - -ferror-limit=0        # show all errors

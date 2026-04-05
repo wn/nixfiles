@@ -26,39 +26,53 @@ in {
       # keyboard macro helper
       kmonad
 
+      #jumk
+      nodejs
+      docker
+
       ### fedora packages
       # ulauncher # add super-space to ulaucher-toggle in custom shortcuts
       wmctrl
+      uv
       gpaste
       spotify
       sqlite
+      wl-clipboard
 
-      nodePackages.mathjax
-
-      # perf
+      # nodePackages.mathjax
+      claude-code
+      hyperfine     
+      wireshark
       cpuid
       flamegraph
       gbenchmark
       hwloc
       perf
+      sysstat
       ocamlPackages.magic-trace
+      pprof
+      perf_data_converter # for pprof
+
+
+      opam
+      dune
 
       # nice to have in terminals
       R
       bash
       bazel
       bear
-      clang # plays better with clangd and header discovery
+      # clang
       clang-tools
       cmake
-      codex
+      # codex
       coreutils
       curl
       delta
       emacs
       eza
       fd
-      # gcc # probably should use nix-shell if gcc is necessary
+      gcc
       gdb
       gdbgui
       glib
@@ -76,8 +90,14 @@ in {
       pinentry-all
       pyright
       ripgrep
+      rr
       texlive.combined.scheme-full
       wget
+      pandoc
+      strace
+      ltrace
+      numactl
+      valgrind
       pure-prompt
       zsh
       zsh-nix-shell
@@ -202,9 +222,10 @@ in {
       gst = "git status";
 
       # nix-os alias
-      rr = ''
+      nixr = ''
         nix-shell -p home-manager --run "home-manager -f ~/nixfiles/home.nix switch"'';
-      rrc = "nix-env --delete-generations old && nix-store --gc";
+      nixrc = "nix-env --delete-generations old && nix-store --gc";
+      genflame = "perf script | stackcollapse-perf.pl | flamegraph.pl > /tmp/flamegraph.svg && google-chrome /tmp/flamegraph.svg";
 
       doom = "~/.emacs.d/bin/doom";
 
@@ -217,6 +238,9 @@ in {
     initContent = ''
       autoload -U promptinit; promptinit
       prompt pure
+
+      zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+      setopt MENU_COMPLETE
     '';
   };
 
@@ -227,6 +251,7 @@ in {
 
   home.sessionPath = [
     "${config.xdg.configHome}/scripts"
+    "${config.home.homeDirectory}/.npm-global/bin"
   ];
 
   systemd.user.services.kmonad = {
@@ -257,15 +282,21 @@ in {
 
   xdg.configFile."clangd/config.yaml".text =
     builtins.replaceStrings
-      [ "@CLANGXX@" ]
-      [ "${pkgs.clang}/bin/clang++" ]
+      [ "@C++COMPILER@" ]
+      [ "${pkgs.gcc}/bin/g++" ]
       (builtins.readFile ./config/clangd/config.yaml.in);
 
-  xdg.configFile."gdb/gdbinit".text =
-    builtins.replaceStrings
-      [ "@GLIBCLIB@" ]
-      [ "${pkgs.glibc}/lib" ]
-      (builtins.readFile ./config/gdb/gdbinit.in);
+  xdg.configFile."gdb/gdbinit".text = ''
+    ${(builtins.readFile ./config/gdb/gdbinit.in)}
+    set libthread-db-search-path ${pkgs.glibc}/lib
+   '';
+
+  home.file.".clang-format".text = ''
+    BasedOnStyle: google
+    IndentWidth: 4
+    TabWidth: 4
+    UseTab: Never
+  '';
 
   # Make scripts available at ~/.config/scripts
   xdg.configFile."scripts" = {
