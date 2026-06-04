@@ -26,9 +26,14 @@ in {
       # keyboard macro helper
       kmonad
 
+      bitwarden-desktop
+      bitwarden-cli
+
       #jumk
       nodejs
       docker
+
+      solaar
 
       ### fedora packages
       # ulauncher # add super-space to ulaucher-toggle in custom shortcuts
@@ -52,10 +57,6 @@ in {
       ocamlPackages.magic-trace
       pprof
       perf_data_converter # for pprof
-
-
-      opam
-      dune
 
       # nice to have in terminals
       R
