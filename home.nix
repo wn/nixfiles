@@ -26,7 +26,7 @@ in {
       # keyboard macro helper
       kmonad
 
-      bitwarden-desktop
+      # bitwarden-desktop
       bitwarden-cli
 
       #jumk
@@ -151,6 +151,7 @@ in {
   fonts.fontconfig.enable = true;
   programs.gpg.enable = true;
   programs.fzf.enable = true;
+  programs.home-manager.enable = true;
 
   programs.git = {
     enable = true;
@@ -181,6 +182,7 @@ in {
         use-agent = true;
       };
     };
+    signing.format = "openpgp";
     ignores = [
       ".cache/"
       ".vscode/"
@@ -223,8 +225,7 @@ in {
       gst = "git status";
 
       # nix-os alias
-      nixr = ''
-        nix-shell -p home-manager --run "home-manager -f ~/nixfiles/home.nix switch"'';
+      nixr = "home-manager -f ~/nixfiles/home.nix switch";
       nixrc = "nix-env --delete-generations old && nix-store --gc";
       genflame = "perf script | stackcollapse-perf.pl | flamegraph.pl > /tmp/flamegraph.svg && google-chrome /tmp/flamegraph.svg";
 

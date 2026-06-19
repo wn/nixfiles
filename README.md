@@ -9,7 +9,10 @@ Configure personal settings in `home.nix`
 ```bash
 curl -L https://nixos.org/nix/install | sh # run as non-root
 export NIX_PATH=~/.nix-defexpr/channels
-nix-shell -p home-manager --run "home-manager -f ~/nixfiles/home.nix switch" && exec zsh
+nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
+nix-channel --update
+nix-shell '<home-manager>' -A install
+home-manager -f ~/nixfiles/home.nix switch
 ```
 
 #### bashrc
@@ -17,7 +20,6 @@ nix-shell -p home-manager --run "home-manager -f ~/nixfiles/home.nix switch" && 
 . /home/weineng/.nix-profile/etc/profile.d/nix.sh
 export NIX_PATH=~/.nix-defexpr/channels
 zsh
-
 ```
 #### fedora
 ``` bash
@@ -41,6 +43,6 @@ nix-channel --add https://nixos.org/channels/nixpkgs-unstable
 nix-channel --add https://github.com/LnL7/nix-darwin/archive/master.tar.gz darwin
 nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
 nix-channel --update
-bash
-nix-shell -p home-manager --run "home-manager -f ~/nixfiles/home.nix switch" && exec zsh
+nix-shell '<home-manager>' -A install
+home-manager -f ~/nixfiles/home.nix switch
 ```
