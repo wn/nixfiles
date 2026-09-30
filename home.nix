@@ -1,7 +1,6 @@
 # https://home-manager-options.extranix.com/
-{ pkgs, config, lib, ... }:
-let
-in {
+{ pkgs, config, ... }:
+{
   imports = [ ];
 
   home = {
@@ -26,6 +25,8 @@ in {
       # keyboard macro helper
       kmonad
 
+      # citrix-workspace
+
       # bitwarden-desktop
       bitwarden-cli
 
@@ -34,8 +35,16 @@ in {
       docker
 
       solaar
+      gnomeExtensions.solaar-extension
 
       ### fedora packages
+      libimobiledevice
+      gvfs
+      ifuse
+      mpv
+      ffmpeg-full
+      vlc
+
       # ulauncher # add super-space to ulaucher-toggle in custom shortcuts
       wmctrl
       uv
@@ -54,7 +63,6 @@ in {
       hwloc
       perf
       sysstat
-      ocamlPackages.magic-trace
       pprof
       perf_data_converter # for pprof
 
@@ -73,7 +81,7 @@ in {
       emacs
       eza
       fd
-      gcc
+      gcc16
       gdb
       gdbgui
       glib
@@ -153,6 +161,14 @@ in {
   programs.fzf.enable = true;
   programs.home-manager.enable = true;
 
+  dconf.settings."org/gnome/shell" = {
+    disable-user-extensions = false;
+    enabled-extensions = [
+      "background-logo@fedorahosted.org"
+      "solaar-extension@sidevesh"
+    ];
+  };
+
   programs.git = {
     enable = true;
     settings = {
@@ -217,12 +233,15 @@ in {
       la = "eza -la";
 
       gaa = "git add .";
+      gca = "git commit --amend";
+      ga = "git add";
       gcmsg = "git commit -s -m";
       gd = "git diff";
       gl = "git log";
       gp = "git push";
       grhh = "git reset --hard";
       gst = "git status";
+      gb = "git branch";
 
       # nix-os alias
       nixr = "home-manager -f ~/nixfiles/home.nix switch";
@@ -243,6 +262,11 @@ in {
 
       zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
       setopt MENU_COMPLETE
+
+      for zsh_script in ${./config/zsh}/*(DN.); do
+        source "$zsh_script"
+      done
+      unset zsh_script
     '';
   };
 
@@ -270,6 +294,31 @@ in {
 
     Install = {
       WantedBy = [ "default.target" ];
+    };
+  };
+
+  systemd.user.services.solaar = {
+    Unit = {
+      Description = "Solaar Logitech Device Manager";
+      After = [ "graphical-session.target" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+
+    Service = {
+      Environment = "XDG_CONFIG_HOME=%t/solaar-managed";
+      RuntimeDirectory = "solaar-managed/solaar";
+      RuntimeDirectoryMode = "0700";
+      ExecStartPre = [
+        "${pkgs.coreutils}/bin/install -m 0600 ${./config/solaar/config.yaml} %t/solaar-managed/solaar/config.yaml"
+        "${pkgs.coreutils}/bin/install -m 0600 ${./config/solaar/rules.yaml} %t/solaar-managed/solaar/rules.yaml"
+      ];
+      ExecStart = "${pkgs.solaar}/bin/solaar --window=hide";
+      Restart = "on-failure";
+      RestartSec = 3;
+    };
+
+    Install = {
+      WantedBy = [ "graphical-session.target" ];
     };
   };
 

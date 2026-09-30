@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+branch=$(
+  git branch --all --format='%(refname:short)' |
+    grep -v '/HEAD$' |
+    fzf \
+      --height=80% \
+      --border \
+      --preview='git log --graph --decorate --color=always --oneline -30 {}' \
+      --preview-window='right:60%'
+) || exit
+
+[[ -z "$branch" ]] && exit
+
+if git show-ref --verify --quiet "refs/heads/$branch"; then
+  git switch "$branch"
+else
+  git switch --track "$branch"
+fi
